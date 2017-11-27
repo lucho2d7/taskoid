@@ -1,0 +1,50 @@
+version: "2"
+services:
+  web:
+    build:
+      context: ./
+      dockerfile: dockerfile.web
+    volumes:
+      - ../../src:/var/www
+    ports:
+      - "8081:80"
+    depends_on:
+      - app
+    networks:
+      - webnet
+  app:
+    build:
+      context: ./
+      dockerfile: dockerfile.app
+    volumes:
+      - ../../src:/var/www
+    environment:
+        - "DB_HOST=database"
+        - "DB_PORT=27017"
+        - "REDIS_HOST=cache"
+        - "REDIS_PORT=6379"
+    depends_on:
+      - database
+    networks:
+      - webnet
+  database:
+    image: mongo:3.5
+    volumes:
+      - ../../datamongo:/data/db
+    environment:
+      - "MONGO_INITDB_ROOT_USERNAME=mongoadmin"
+      - "MONGO_INITDB_ROOT_PASSWORD=qwerty"
+    ports:
+      - "28017:27017"
+    networks:
+      - webnet
+  cache:
+    image: redis:4.0
+    volumes:
+      - ../../dataredis:/data
+    ports:
+      - "63791:6379"
+    networks:
+      - webnet
+networks:
+  webnet:
