@@ -1,7 +1,7 @@
 {
-    "name": "francescomalatesta/laravel-api-boilerplate-jwt",
-    "description": "An API Boilerplate to create a ready-to-use REST API in seconds.",
-    "keywords": ["laravel", "api", "boilerplate", "jwt"],
+    "name": "Taskoid",
+    "description": "A task manager REST web service.",
+    "keywords": ["todo list", "task manager", "web service"],
     "license": "MIT",
     "type": "project",
     "require": {
