@@ -9,8 +9,27 @@ use App\Api\V1\Requests\ForgotPasswordRequest;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class ForgotPasswordController extends Controller
+/**
+ * Forgotten password recovery function.
+ *
+ * @Resource("Auth Forgot Password", uri="/auth/recovery")
+ */
+class ForgotPasswordController extends ApiController
 {
+    /**
+     * Request a password reset link through email.
+     *
+     * @Post("/")
+     * @Versions({"v1"})
+     * @Parameters({
+     *      @Parameter("email", type="string", description="User email.", required=true),
+     * })
+     * @Response(200, body={"status":"ok"})
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Tymon\JWTAuth\JWTAuth  $JWTAuth
+     * @return \Illuminate\Http\Response
+     */
     public function sendResetEmail(ForgotPasswordRequest $request)
     {
         $user = User::where('email', '=', $request->get('email'))->first();

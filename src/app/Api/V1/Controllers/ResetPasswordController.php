@@ -10,8 +10,30 @@ use Illuminate\Support\Facades\Password;
 use App\Api\V1\Requests\ResetPasswordRequest;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class ResetPasswordController extends Controller
+/**
+ * User password reset function.
+ *
+ * @Resource("Auth Reset Password", uri="/auth/reset")
+ */
+class ResetPasswordController extends ApiController
 {
+    /**
+     * Request a password reset.
+     *
+     * @Post("/")
+     * @Versions({"v1"})
+     * @Parameters({
+     *      @Parameter("token", type="string", description="A valid password reset token.", required=true),
+     *      @Parameter("email", type="string", description="The user email.", required=true),
+     *      @Parameter("password", type="string", description="A new password.", required=true),
+     *      @Parameter("password_confirmation", type="string", description="The new password confirmation.", required=true),
+     * })
+     * @Response(200, body={"status":"ok"})
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Tymon\JWTAuth\JWTAuth  $JWTAuth
+     * @return \Illuminate\Http\Response
+     */
     public function resetPassword(ResetPasswordRequest $request, JWTAuth $JWTAuth)
     {
         $response = $this->broker()->reset(
