@@ -4,25 +4,31 @@ namespace App;
 
 use Hash;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Mail;
 use App\Task;
 use App\Mail\ResetUserPassword;
 use App\Mail\SignUpVerification;
 
-class User extends Authenticatable
+class User extends Moloquent implements
+    AuthenticatableContract,
+    AuthorizableContract,
+    CanResetPasswordContract
 {
+    use Authenticatable, Authorizable, Notifiable, CanResetPassword;
+
     const ROLE_SUPERADMIN = 'superadmin';
     const ROLE_ADMIN = 'admin';
     const ROLE_USER = 'user';
 
     const STATUS_ENABLED = 'enabled';
     const STATUS_DISABLED = 'disabled';
-
-    use Notifiable;
-    use CanResetPassword;
 
     /**
      * The attributes that are mass assignable.
