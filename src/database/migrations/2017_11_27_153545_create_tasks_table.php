@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+use Jenssegers\Mongodb\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateTasksTable extends Migration
@@ -19,7 +19,7 @@ class CreateTasksTable extends Migration
             $table->foreign('user_id')
                         ->references('id')->on('users')
                         ->onDelete('cascade');
-            $table->date('due_date');
+            $table->timestamp('due_date');
             $table->text('title');
             $table->text('description');
             $table->timestamps();
@@ -33,6 +33,9 @@ class CreateTasksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tasks');
+        //dropIfExists fails with mongodb driver
+        //Schema::dropIfExists('tasks');
+        
+        Schema::drop('tasks');
     }
 }

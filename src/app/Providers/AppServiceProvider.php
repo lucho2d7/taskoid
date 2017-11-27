@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Validator;
+use Jenssegers\Mongodb\Eloquent\Builder;
 use App\User;
 
 class AppServiceProvider extends ServiceProvider
@@ -34,6 +35,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        // Bugfix for php artisan db:seed
+        // ref https://github.com/jenssegers/laravel-mongodb/issues/1191
+        Builder::macro('getName', function() {
+            return 'mongodb';
+        });
     }
 }
