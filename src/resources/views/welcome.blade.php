@@ -91,7 +91,7 @@
                 </h2>
 
                 <nav class="links">
-                    <a href="#">Option 1</a>
+                    <a href="/dump">Dump</a>
                     <a href="#">Option 2</a>
                     <a href="#">Option 3</a>
                 </nav>
