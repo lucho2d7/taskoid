@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>Traskoid</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
@@ -19,6 +19,10 @@
                 font-weight: 100;
                 height: 100vh;
                 margin: 0;
+            }
+
+            h1, h2, h3 {
+                font-weight: normal;
             }
 
             .full-height {
@@ -78,17 +82,19 @@
             @endif
 
             <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
+                <h1 class="title m-b-md">
+                    Taskoid
+                </h1>
 
-                <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
+                <h2 class="subtitle m-b-md">
+                    a task manager tool
+                </h2>
+
+                <nav class="links">
+                    <a href="#">Option 1</a>
+                    <a href="#">Option 2</a>
+                    <a href="#">Option 3</a>
+                </nav>
             </div>
         </div>
     </body>
