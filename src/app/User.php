@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Moloquent;
 use Hash;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Auth\Authenticatable;
@@ -46,6 +47,15 @@ class User extends Moloquent implements
      */
     protected $hidden = [
         'password', 'remember_token', 'created_at', 'updated_at', 'status_validation_token',
+    ];
+
+    /**
+     * Date attributes for mongodb models
+     *
+     * @var array
+     */
+    protected $dates = [
+        'created_at', 'updated_at',
     ];
 
     /**

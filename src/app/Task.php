@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Moloquent;
+
 class Task extends Moloquent
 {
     /**
@@ -20,6 +22,15 @@ class Task extends Moloquent
      */
     protected $hidden = [
         //'created_at', 'updated_at',
+    ];
+
+    /**
+     * Date attributes for mongodb models
+     *
+     * @var array
+     */
+    protected $dates = [
+        'created_at', 'updated_at', 'due_date',
     ];
 
     /**
