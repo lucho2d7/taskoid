@@ -118,13 +118,9 @@ class UserPolicy extends BasePolicy
             if($user->isAdmin() && !in_array($params['role'], $user->getLowerRoles())) {
                 return false;
             }
-
-            if($user->isManager()) {
-                return false;
-            }
         }
 
-        if($user->isAdmin() || $user->isManager()) {
+        if($user->isAdmin()) {
             return true;
         }
 
