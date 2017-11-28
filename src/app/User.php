@@ -4,6 +4,7 @@ namespace App;
 
 use Moloquent;
 use Hash;
+use Config;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
@@ -59,6 +60,14 @@ class User extends Moloquent implements
     ];
 
     /**
+     * Default values for attributes
+     * @var  array an array with attribute as key and default as value
+     */
+    protected $attributes = [
+        'role' => self::ROLE_USER,
+    ];
+
+    /**
      * Send password reset email.
      *
      * @param  string  $role
@@ -66,12 +75,16 @@ class User extends Moloquent implements
      */
     public function sendPasswordResetNotification($token)
     {
-        if(env('APP_DEBUG')) {
+        // This enables returning the token in the forgot password
+        // response in order to allow automated API testing
+        if(Config::get('boilerplate.forgot_password.return_password_recovery_token') && env('APP_DEBUG')) {
             // Save the token for use in ForgotPasswordController::sendResetEmail to allow automated API testing
             session(['password_recovery_token' => $token]);
         }
-
-        Mail::to($this->email)->send(new ResetUserPassword($token));
+        
+        if(env('MAIL_ENABLED')) {
+            Mail::to($this->email)->send(new ResetUserPassword($token));
+        }
     }
 
     /**
@@ -82,7 +95,16 @@ class User extends Moloquent implements
      */
     public function sendSignupVerificationNotification($token)
     {
-        Mail::to($this->email)->send(new SignUpVerification($token));
+         // This enables returning the token in the forgot password
+        // response in order to allow automated API testing
+        if(Config::get('boilerplate.sign_up.return_verification_token') && env('APP_DEBUG')) {
+            // Save the token for use in ForgotPasswordController::sendResetEmail to allow automated API testing
+            session(['signup_verification_token' => $token]);
+        }
+
+        if(env('MAIL_ENABLED')) {
+            Mail::to($this->email)->send(new SignUpVerification($token));
+        }
     }
 
     /**

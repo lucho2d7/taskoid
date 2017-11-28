@@ -49,18 +49,13 @@ class ResetPasswordController extends ApiController
             throw new HttpException(422);//Unprocessable Entity
         }
 
-        if(!Config::get('boilerplate.reset_password.release_token')) {
-            return response()->json([
-                'status' => 'ok',
-            ]);
+        $response = ['status' => 'ok'];
+
+        if(Config::get('boilerplate.reset_password.release_token')) {
+            $response['token'] = $JWTAuth->fromUser($user);
         }
 
-        $user = User::where('email', '=', $request->get('email'))->first();
-
-        return response()->json([
-            'status' => 'ok',
-            'token' => $JWTAuth->fromUser($user)
-        ]);
+        return response()->json($response, 200);
     }
 
     /**

@@ -56,17 +56,21 @@ class SignUpController extends ApiController
             throw new HttpException(500);
         }
 
-        if(!Config::get('boilerplate.sign_up.release_token')) {
-            return response()->json([
-                'status' => 'ok'
-            ], 201);
+        $response = ['status' => 'ok'];
+
+        // This enables returning the token in the signup
+        // response in order to allow automated API testing
+        if(Config::get('boilerplate.sign_up.return_verification_token') && env('APP_DEBUG')) {
+            $response['signup_verification_token'] = session('signup_verification_token');
+
+            session(['signup_verification_token' => null]);
         }
 
-        $token = $JWTAuth->fromUser($user);
-        return response()->json([
-            'status' => 'ok',
-            'token' => $token
-        ], 201);
+        if(Config::get('boilerplate.sign_up.release_token')) {
+            $response['token'] = $JWTAuth->fromUser($user);
+        }
+
+        return response()->json($response, 201);
     }
 
     /**

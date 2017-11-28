@@ -4,6 +4,7 @@ return [
 
     'sign_up' => [
         'release_token' => env('SIGN_UP_RELEASE_TOKEN'),
+        'return_verification_token' => env('SIGN_UP_RETURN_ACCOUNT_VERIFICATION_TOKEN'),
         'validation_rules' => [
             'name' => 'required|min:2|max:255',
             'email' => 'required|email|unique:users',
@@ -27,6 +28,7 @@ return [
     ],
 
     'forgot_password' => [
+        'return_password_recovery_token' => env('FORGOT_PASSWORD_RETURN_RESET_TOKEN', false),
         'validation_rules' => [
             'email' => 'required|email'
         ]

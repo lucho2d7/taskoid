@@ -2,6 +2,7 @@
 
 namespace App\Api\V1\Controllers;
 
+use Config;
 use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Password;
@@ -48,19 +49,14 @@ class ForgotPasswordController extends ApiController
             throw new HttpException(500);
         }
 
-        if(env('APP_DEBUG')) {
-            // Return the token to allow automated API testing
-            $response = [
-                            'status' => 'ok',
-                            'testing_pwd_reset_token' => session('password_recovery_token'),
-                        ];
+        $response = ['status' => 'ok'];
+
+        // This enables returning the token in the forgot password
+        // response in order to allow automated API testing
+        if(Config::get('boilerplate.forgot_password.return_password_recovery_token') && env('APP_DEBUG')) {
+            $response['testing_password_recovery_token'] = session('password_recovery_token');
 
             session(['password_recovery_token' => null]);
-        }
-        else {
-            $response = [
-                            'status' => 'ok'
-                        ];
         }
 
         return response()->json($response, 200);
