@@ -100,6 +100,9 @@ return [
             'rule-name' => 'custom-message',
         ],
     ],
+    'validrole'                  => 'The specified role is invalid.',
+    'validstatus'                  => 'The specified status is invalid.',
+    'validuserid'                  => 'The specified user id is invalid.',
 
     /*
     |--------------------------------------------------------------------------
