@@ -114,7 +114,7 @@ class TaskController extends ApiController
         $this->validate($request, [
             'title' => 'required|min:2|max:1020',
             'description' => 'required|min:2|max:1020',
-            'completed' => 'required|boolean',
+            'completed' => 'boolean',
             'due_date' => 'required|date_format:Y-m-d H:i:s',
             'user_id' => 'string|min:24|validuserid',
         ]);
@@ -122,7 +122,7 @@ class TaskController extends ApiController
         $task = new Task();
         $task->fill($request->all());
 
-        $task->user_id = ($currentUser->isUser() || empty($request->input('user_id')))
+        $task->user_id = ($currentUser->isUser() || !$request->has('user_id'))
                             ? $currentUser->id
                             : $request->input('user_id');
 
@@ -190,7 +190,7 @@ class TaskController extends ApiController
         $this->validate($request, [
             'title' => 'required|min:2|max:1020',
             'description' => 'required|min:2|max:1020',
-            'completed' => 'required|boolean',
+            'completed' => 'boolean',
             'due_date' => 'required|date_format:Y-m-d H:i:s',
             'user_id' => 'string|min:24|validuserid',
         ]);

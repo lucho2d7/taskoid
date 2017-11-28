@@ -34,6 +34,14 @@ class Task extends Moloquent
     ];
 
     /**
+     * Default values for attributes
+     * @var  array an array with attribute as key and default as value
+     */
+    protected $attributes = [
+        'completed' => false,
+    ];
+
+    /**
      * Get user that owns this task
      *
      * @return App\User
