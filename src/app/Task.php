@@ -98,10 +98,10 @@ class Task extends Moloquent
      * @param  string  $completed
      * @return Illuminate\Database\Eloquent\Builder
      */
-    public function scopeCompleted($query, $completed)
+    public function scopeCompleted($query, $applyFilter, $completed)
     {
-        if($completed) {
-            return $query->where('completed', $completed);
+        if($applyFilter) {
+            return $query->where('completed', (boolean)$completed);
         }
 
         return $query;

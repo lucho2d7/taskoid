@@ -48,11 +48,12 @@ class UserController extends ApiController
         $currentUser = JWTAuth::parseToken()->authenticate();
 
         $this->validate($request, [
-            'id' => 'numeric|min:1',
+            'id' => 'integer|min:1',
             'name' => 'min:2|max:255',
             'email' => 'min:2|max:255',
             'status' => 'validstatus',
             'role' => 'validrole',
+            'page' => 'integer|min:1',
         ]);
 
         $users = [];

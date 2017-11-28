@@ -58,7 +58,8 @@ class TaskController extends ApiController
             'created_at_to' => 'date_format:Y-m-d H:i:s',
             'updated_at_from' => 'date_format:Y-m-d H:i:s',
             'updated_at_to' => 'date_format:Y-m-d H:i:s',
-            'user_id' => 'numeric|min:1|validuserid',
+            'user_id' => 'integer|min:1|validuserid',
+            'page' => 'integer|min:1',
         ]);
 
         $currentUser = JWTAuth::parseToken()->authenticate();
@@ -70,7 +71,7 @@ class TaskController extends ApiController
         $tasks = Task::userId($user_id)
                         ->titlePartial($request->input('title'))
                         ->descriptionPartial($request->input('description'))
-                        ->completed($request->input('completed'))
+                        ->completed($request->has('completed'), $request->input('completed'))
                         ->dueDateFrom($request->input('due_date_from'))
                         ->dueDateTo($request->input('due_date_to'))
                         ->createdAtFrom($request->input('created_at_from'))
@@ -115,7 +116,7 @@ class TaskController extends ApiController
             'description' => 'required|min:2|max:255',
             'completed' => 'required|boolean',
             'due_date' => 'required|date_format:Y-m-d H:i:s',
-            'user_id' => 'numeric|min:1',
+            'user_id' => 'integer|min:1',
         ]);
         
         $task = new Task();
@@ -191,7 +192,7 @@ class TaskController extends ApiController
             'description' => 'required|min:2|max:255',
             'completed' => 'required|boolean',
             'due_date' => 'required|date_format:Y-m-d H:i:s',
-            'user_id' => 'numeric|min:1|validuserid',
+            'user_id' => 'integer|min:1|validuserid',
         ]);
 
         $task->fill($request->all());
