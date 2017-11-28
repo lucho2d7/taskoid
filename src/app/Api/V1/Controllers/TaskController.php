@@ -49,8 +49,8 @@ class TaskController extends ApiController
         $this->authorize('list', [Task::class, $request->all()]);
 
         $this->validate($request, [
-            'title' => 'min:2|max:255',
-            'description' => 'min:2|max:255',
+            'title' => 'min:2|max:1020',
+            'description' => 'min:2|max:1020',
             'due_date_from' => 'date_format:Y-m-d H:i:s',
             'due_date_to' => 'date_format:Y-m-d H:i:s',
             'completed' => 'boolean',
@@ -58,7 +58,7 @@ class TaskController extends ApiController
             'created_at_to' => 'date_format:Y-m-d H:i:s',
             'updated_at_from' => 'date_format:Y-m-d H:i:s',
             'updated_at_to' => 'date_format:Y-m-d H:i:s',
-            'user_id' => 'integer|min:1|validuserid',
+            'user_id' => 'string|min:24|validuserid',
             'page' => 'integer|min:1',
         ]);
 
@@ -66,7 +66,7 @@ class TaskController extends ApiController
 
         $user_id = ($currentUser->isSuperAdmin() || $currentUser->isAdmin())
                     ? $request->input('user_id')
-                    : $currentUser->id;
+                    : $currentUser->_id;
 
         $tasks = Task::userId($user_id)
                         ->titlePartial($request->input('title'))
@@ -112,11 +112,11 @@ class TaskController extends ApiController
         $this->authorize('store', [Task::class, $request->input('user_id')]);
         
         $this->validate($request, [
-            'title' => 'required|min:2|max:255',
-            'description' => 'required|min:2|max:255',
+            'title' => 'required|min:2|max:1020',
+            'description' => 'required|min:2|max:1020',
             'completed' => 'required|boolean',
             'due_date' => 'required|date_format:Y-m-d H:i:s',
-            'user_id' => 'integer|min:1',
+            'user_id' => 'string|min:24|validuserid',
         ]);
         
         $task = new Task();
@@ -167,7 +167,7 @@ class TaskController extends ApiController
      *
      * @Put("/")
      * @Versions({"v1"})
-     * @Parameters({
+     * @Parameters({
      *      @Parameter("id", type="integer", description="Task Id.", required=true),
      *      @Parameter("title", type="string", description="Task title.", required=true),
      *      @Parameter("description", type="string", description="Task description.", required=true),
@@ -188,11 +188,11 @@ class TaskController extends ApiController
         $this->authorize('update', $task);
 
         $this->validate($request, [
-            'title' => 'required|min:2|max:255',
-            'description' => 'required|min:2|max:255',
+            'title' => 'required|min:2|max:1020',
+            'description' => 'required|min:2|max:1020',
             'completed' => 'required|boolean',
             'due_date' => 'required|date_format:Y-m-d H:i:s',
-            'user_id' => 'integer|min:1|validuserid',
+            'user_id' => 'string|min:24|validuserid',
         ]);
 
         $task->fill($request->all());
@@ -209,7 +209,8 @@ class TaskController extends ApiController
         $task->setHidden(['user']);
         
         return response()->json([
-                'status' => 'ok'
+                'status' => 'ok',
+                'task' => $task
             ], 200);
     }
 
