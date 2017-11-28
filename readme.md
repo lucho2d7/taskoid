@@ -8,19 +8,19 @@ This is a BackEnd Exercise project.
 
 Create a REST web service (API only no web ui needed) of a TO DO list. The actions to perform are:
 
-- [ ] Create a new task
-- [ ] Update a task
-- [ ] Delete a task.
-- [ ] Show a task by id.
-- [ ] List all tasks:
+- [x] Create a new task
+- [x] Update a task
+- [x] Delete a task.
+- [x] Show a task by id.
+- [x] List all tasks:
 - [ ] I want to filter the tasks by due date, completed and uncompleted, date of creation, and date of update.
-- [ ] The response, must be paginated showing only 5 results per page.
+- [x] The response, must be paginated showing only 5 results per page.
 
 ### Technologies to use:
 
 - [x] The exercise must be developed in PHP.
 - [x] You CAN use any framework that you want with no restrictions.
-- [ ] You MUST use a MongoDB Database.
+- [x] You MUST use a MongoDB Database.
 - [ ] The list of all result must be cached with Redis or Memcached.
 - [ ] Take care of the validations of the required fields.
 
