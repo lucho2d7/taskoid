@@ -54,7 +54,7 @@ class LoginController extends ApiController
         return response()
             ->json([
                 'status' => 'ok',
-                'id' => $currentUser->id,
+                '_id' => $currentUser->_id,
                 'role' => $currentUser->role,
                 'name' => $currentUser->name,
                 'token' => $token
