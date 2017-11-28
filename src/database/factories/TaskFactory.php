@@ -16,7 +16,7 @@ use App\Task;
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(Task::class, function (Faker\Generator $faker) {
 
-    $created_at = $faker->dateTimeBetween('-3 month', '+2 month');
+    $created_at = $faker->dateTimeBetween('-3 month', 'now');
     $due_date = $faker->dateTimeBetween($created_at, '+3 month');
     $updated_at = $faker->dateTimeBetween($created_at, $due_date);
 
