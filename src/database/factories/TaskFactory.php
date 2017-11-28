@@ -21,8 +21,8 @@ $factory->define(Task::class, function (Faker\Generator $faker) {
     $updated_at = $faker->dateTimeBetween($created_at, $due_date);
 
     return [
-        'title' => $faker->realText($faker->numberBetween(2, 20)),
-        'description' => $faker->realText($faker->numberBetween(2, 1020)),
+        'title' => $faker->realText($faker->numberBetween(10, 20)),
+        'description' => $faker->realText($faker->numberBetween(10, 1020)),
         'completed' => $faker->boolean(50),
         'due_date' => $due_date,
         'created_at' => $created_at,
