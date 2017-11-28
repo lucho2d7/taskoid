@@ -19,8 +19,8 @@ class UserPolicy extends BasePolicy
      */
     public function before($user, $ability)
     {
-        // SuperAdmin can do anything but delete itself
-        if($user->isSuperAdmin() && $ability != 'delete') {
+        // SuperAdmin can do anything but delete itself or add another superadmin
+        if($user->isSuperAdmin() && !in_array($ability, ['delete', 'store'])) {
             return true;
         }
     }
@@ -46,6 +46,14 @@ class UserPolicy extends BasePolicy
      */
     public function store(User $user, $role)
     {
+        if($role == User::ROLE_SUPERADMIN) {
+            return false;
+        }
+
+        if($user->isSuperAdmin()) {
+            return true;
+        }
+
         if(($user->isAdmin())
             && in_array($role, $user->getLowerRoles())) {
             return true;
