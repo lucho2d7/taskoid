@@ -42,6 +42,14 @@ class Task extends Moloquent
     ];
 
     /**
+     * Casts for attributes
+     * @var  array an array with attribute as key and type as value
+     */
+    protected $casts = [
+        'completed' => 'boolean',
+    ];
+
+    /**
      * Get user that owns this task
      *
      * @return App\User
