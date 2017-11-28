@@ -21,8 +21,12 @@ class Controller extends BaseController
      */
     public function dump()
     {
-        $tasks = Task::orderBy('user_id', 'asc')->orderBy('due_date', 'asc')->get();
+        if(env('APP_DEBUG')) {
+            $tasks = Task::orderBy('user_id', 'asc')->orderBy('due_date', 'asc')->get();
 
-        return View::make('dump')->with('tasks', $tasks);
+            return View::make('dump')->with('tasks', $tasks);
+        }
+
+        return abort(404);
     }
 }
