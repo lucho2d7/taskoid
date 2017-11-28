@@ -62,7 +62,7 @@ class TaskPolicy extends BasePolicy
 
         // Allow if current user has greater permission level than the task owner
         $taskUser = User::find($task_user_id);
-        if($this->hierarchicallyAllowed($user, $taskUser)) {
+        if($taskUser instanceof User && $this->hierarchicallyAllowed($user, $taskUser)) {
             return true;
         }
 
@@ -129,11 +129,7 @@ class TaskPolicy extends BasePolicy
 
             $userToAccess = User::find($params['user_id']);
 
-            if(!is_object($userToAccess)) {
-                return false;
-            }
-
-            if($this->hierarchicallyAllowed($user, $userToAccess)) {
+            if($userToAccess instanceof User && $this->hierarchicallyAllowed($user, $userToAccess)) {
                 return true;
             }
 
