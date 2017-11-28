@@ -29,8 +29,6 @@ services:
       - webnet
   database:
     image: mongo:3.5
-    volumes:
-      - ../../datamongo:/data/db
     environment:
       - "MONGO_INITDB_ROOT_USERNAME=mongoadmin"
       - "MONGO_INITDB_ROOT_PASSWORD=qwerty"
@@ -40,8 +38,6 @@ services:
       - webnet
   cache:
     image: redis:4.0
-    volumes:
-      - ../../dataredis:/data
     ports:
       - "63791:6379"
     networks:
