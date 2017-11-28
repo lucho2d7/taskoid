@@ -48,7 +48,7 @@ class TaskPolicy extends BasePolicy
      */
     public function store(User $user, $task_user_id)
     {
-        $task_user_id = (int)$task_user_id;
+        $task_user_id = $task_user_id;
 
         // Do not allow to create a task without user
         if(!$task_user_id) {
@@ -128,6 +128,10 @@ class TaskPolicy extends BasePolicy
             && $params['user_id'] !== '') {
 
             $userToAccess = User::find($params['user_id']);
+
+            if(!is_object($userToAccess)) {
+                return false;
+            }
 
             if($this->hierarchicallyAllowed($user, $userToAccess)) {
                 return true;
