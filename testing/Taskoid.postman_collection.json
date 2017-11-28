@@ -7,6 +7,103 @@
 	},
 	"item": [
 		{
+			"name": "init",
+			"description": "",
+			"item": [
+				{
+					"name": "global functions",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"postman.setGlobalVariable(\"loadUtils\", function loadUtils() {",
+									"    let utils = {};",
+									"",
+									"    utils.reuseableFunction = function reuseableFunction() {",
+									"        let jsonData = JSON.parse(responseBody);",
+									"        console.log(\"foobar\");",
+									"    }",
+									"    ",
+									"    utils.randomString = function randomString(allowedChars, length) {",
+									"        var randomString = '';",
+									"        ",
+									"        for (var i=0; i<length; i++) {",
+									"           var rnum = Math.floor(Math.random() * allowedChars.length);",
+									"           randomString += allowedChars.substring(rnum,rnum+1);",
+									"        }",
+									"        ",
+									"        return randomString;",
+									"    }",
+									"    ",
+									"    utils.randomTitle = function randomTitle() {",
+									"        var allowedChars = \"abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ \";",
+									"        ",
+									"        return  utils.randomString(allowedChars, 15);",
+									"    }",
+									"    ",
+									"    utils.randomDescription = function randomDescription() {",
+									"        var allowedChars = \"abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ \";",
+									"        ",
+									"        return  utils.randomString(allowedChars, 300);",
+									"    }",
+									"    ",
+									"    utils.randomName = function randomName() {",
+									"        var allowedChars = \"abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\";",
+									"        var firstName =  utils.randomString(allowedChars, 10);",
+									"        var lastName =  utils.randomString(allowedChars, 10);",
+									"        ",
+									"        return firstName+\" \"+lastName;",
+									"    }",
+									"    ",
+									"    utils.randomEmail = function randomEmail() {",
+									"        var allowedCharsLocal = \"abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.\";",
+									"        var randomLocal =  utils.randomString(allowedCharsLocal, 10);",
+									"        randomLocal = randomLocal.replace(/^\\.+|\\.+$/gm,'');",
+									"    ",
+									"        var allowedCharsDomain = \"abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-\";",
+									"        var randomDomain =  utils.randomString(allowedCharsDomain, 10);",
+									"        randomDomain = randomDomain.replace(/^-+|-+$/gm,'');",
+									"        ",
+									"        return randomLocal+\"@\"+randomDomain+\".com\";",
+									"    }",
+									"    ",
+									"    utils.randomPwd = function randomPwd() {",
+									"        var allowedChars = \"abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!$*+-/=_{|}.\";",
+									"        return  utils.randomString(allowedChars, 10);",
+									"    }",
+									"",
+									"    return utils;",
+									"",
+									"} + '; loadUtils();');"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8081/api/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								""
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "unlogged user tests",
 			"item": [
 				{
@@ -485,45 +582,10 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"function randomString(allowedChars, length) {",
-									"    var randomString = '';",
-									"    ",
-									"    for (var i=0; i<length; i++) {",
-									"       var rnum = Math.floor(Math.random() * allowedChars.length);",
-									"       randomString += allowedChars.substring(rnum,rnum+1);",
-									"    }",
-									"    ",
-									"    return randomString;",
-									"}",
-									"",
-									"function randomName() {",
-									"    var allowedChars = \"abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\";",
-									"    var firstName = randomString(allowedChars, 10);",
-									"    var lastName = randomString(allowedChars, 10);",
-									"    ",
-									"    return firstName+\" \"+lastName;",
-									"}",
-									"",
-									"function randomEmail() {",
-									"    var allowedCharsLocal = \"abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.\";",
-									"    var randomLocal = randomString(allowedCharsLocal, 10);",
-									"    randomLocal = randomLocal.replace(/^\\.+|\\.+$/gm,'');",
-									"",
-									"    var allowedCharsDomain = \"abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-\";",
-									"    var randomDomain = randomString(allowedCharsDomain, 10);",
-									"    randomDomain = randomDomain.replace(/^-+|-+$/gm,'');",
-									"    ",
-									"    return randomLocal+\"@\"+randomDomain+\".com\";",
-									"}",
-									"",
-									"function randomPwd() {",
-									"    var allowedChars = \"abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!$*+-/=_{|}.\";",
-									"    return randomString(allowedChars, 10);",
-									"}",
-									"",
-									"postman.setEnvironmentVariable(\"name\", randomName());",
-									"postman.setEnvironmentVariable(\"valid_email\", randomEmail());",
-									"postman.setEnvironmentVariable(\"valid_password\", randomPwd());"
+									"let utils = eval(globals.loadUtils);",
+									"postman.setEnvironmentVariable(\"name\", utils.randomName());",
+									"postman.setEnvironmentVariable(\"valid_email\", utils.randomEmail());",
+									"postman.setEnvironmentVariable(\"valid_password\", utils.randomPwd());"
 								]
 							}
 						}
@@ -1065,31 +1127,9 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"function randomString(allowedChars, length) {",
-									"    var randomString = '';",
-									"    ",
-									"    for (var i=0; i<length; i++) {",
-									"       var rnum = Math.floor(Math.random() * allowedChars.length);",
-									"       randomString += allowedChars.substring(rnum,rnum+1);",
-									"    }",
-									"    ",
-									"    return randomString;",
-									"}",
-									"",
-									"function randomTitle() {",
-									"    var allowedChars = \"abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ \";",
-									"    ",
-									"    return randomString(allowedChars, 15);",
-									"}",
-									"",
-									"function randomDescription() {",
-									"    var allowedChars = \"abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ \";",
-									"    ",
-									"    return randomString(allowedChars, 300);",
-									"}",
-									"",
-									"postman.setEnvironmentVariable(\"title\", randomTitle());",
-									"postman.setEnvironmentVariable(\"description\", randomDescription());"
+									"let utils = eval(globals.loadUtils);",
+									"postman.setEnvironmentVariable(\"title\", utils.randomTitle());",
+									"postman.setEnvironmentVariable(\"description\", utils.randomDescription());"
 								]
 							}
 						}
@@ -1176,31 +1216,9 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"function randomString(allowedChars, length) {",
-									"    var randomString = '';",
-									"    ",
-									"    for (var i=0; i<length; i++) {",
-									"       var rnum = Math.floor(Math.random() * allowedChars.length);",
-									"       randomString += allowedChars.substring(rnum,rnum+1);",
-									"    }",
-									"    ",
-									"    return randomString;",
-									"}",
-									"",
-									"function randomTitle() {",
-									"    var allowedChars = \"abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ \";",
-									"    ",
-									"    return randomString(allowedChars, 15);",
-									"}",
-									"",
-									"function randomDescription() {",
-									"    var allowedChars = \"abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ \";",
-									"    ",
-									"    return randomString(allowedChars, 300);",
-									"}",
-									"",
-									"postman.setEnvironmentVariable(\"title\", randomTitle());",
-									"postman.setEnvironmentVariable(\"description\", randomDescription());"
+									"let utils = eval(globals.loadUtils);",
+									"postman.setEnvironmentVariable(\"title\", utils.randomTitle());",
+									"postman.setEnvironmentVariable(\"description\", utils.randomDescription());"
 								]
 							}
 						}
@@ -1399,31 +1417,9 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"function randomString(allowedChars, length) {",
-									"    var randomString = '';",
-									"    ",
-									"    for (var i=0; i<length; i++) {",
-									"       var rnum = Math.floor(Math.random() * allowedChars.length);",
-									"       randomString += allowedChars.substring(rnum,rnum+1);",
-									"    }",
-									"    ",
-									"    return randomString;",
-									"}",
-									"",
-									"function randomTitle() {",
-									"    var allowedChars = \"abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ \";",
-									"    ",
-									"    return randomString(allowedChars, 15);",
-									"}",
-									"",
-									"function randomDescription() {",
-									"    var allowedChars = \"abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ \";",
-									"    ",
-									"    return randomString(allowedChars, 300);",
-									"}",
-									"",
-									"postman.setEnvironmentVariable(\"title\", randomTitle());",
-									"postman.setEnvironmentVariable(\"description\", randomDescription());"
+									"let utils = eval(globals.loadUtils);",
+									"postman.setEnvironmentVariable(\"title\", utils.randomTitle());",
+									"postman.setEnvironmentVariable(\"description\", utils.randomDescription());"
 								]
 							}
 						}
@@ -1795,23 +1791,8 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"function randomString(allowedChars, length) {",
-									"    var randomString = '';",
-									"    ",
-									"    for (var i=0; i<length; i++) {",
-									"       var rnum = Math.floor(Math.random() * allowedChars.length);",
-									"       randomString += allowedChars.substring(rnum,rnum+1);",
-									"    }",
-									"    ",
-									"    return randomString;",
-									"}",
-									"",
-									"function randomPwd() {",
-									"    var allowedChars = \"abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!$*+-/=_{|}.\";",
-									"    return randomString(allowedChars, 10);",
-									"}",
-									"",
-									"postman.setEnvironmentVariable(\"valid_password\", randomPwd());"
+									"let utils = eval(globals.loadUtils);",
+									"postman.setEnvironmentVariable(\"valid_password\", utils.randomPwd());"
 								]
 							}
 						}
@@ -2009,16 +1990,6 @@
 									"postman.setEnvironmentVariable(\"token\", jsonData.token);",
 									"postman.setEnvironmentVariable(\"current_user_id\", jsonData._id);",
 									""
-								]
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"postman.setEnvironmentVariable(\"valid_email\", \"john@localhost.dev\");",
-									"postman.setEnvironmentVariable(\"valid_password\", \"john\");"
 								]
 							}
 						}
@@ -2912,16 +2883,6 @@
 									""
 								]
 							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"postman.setEnvironmentVariable(\"valid_email\", \"admin@localhost.dev\");",
-									"postman.setEnvironmentVariable(\"valid_password\", \"admin\");"
-								]
-							}
 						}
 					],
 					"request": {
@@ -2937,7 +2898,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:8081/api/auth/login?email={{valid_email}}&password={{valid_password}}",
+							"raw": "http://localhost:8081/api/auth/login?email={{superadmin_email}}&password={{superadmin_password}}",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2951,12 +2912,12 @@
 							"query": [
 								{
 									"key": "email",
-									"value": "{{valid_email}}",
+									"value": "{{superadmin_email}}",
 									"equals": true
 								},
 								{
 									"key": "password",
-									"value": "{{valid_password}}",
+									"value": "{{superadmin_password}}",
 									"equals": true
 								}
 							]
