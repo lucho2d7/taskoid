@@ -66,6 +66,11 @@ class User extends Moloquent implements
      */
     public function sendPasswordResetNotification($token)
     {
+        if(env('APP_DEBUG')) {
+            // Save the token for use in ForgotPasswordController::sendResetEmail to allow automated API testing
+            session(['password_recovery_token' => $token]);
+        }
+
         Mail::to($this->email)->send(new ResetUserPassword($token));
     }
 

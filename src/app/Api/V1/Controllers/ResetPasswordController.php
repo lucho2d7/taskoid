@@ -9,6 +9,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Password;
 use App\Api\V1\Requests\ResetPasswordRequest;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use MongoDB\BSON\UTCDateTime;
+use DateTimeZone;
+use DateTime;
 
 /**
  * User password reset function.
@@ -43,7 +46,7 @@ class ResetPasswordController extends ApiController
         );
 
         if($response !== Password::PASSWORD_RESET) {
-            throw new HttpException(500);
+            throw new HttpException(422);//Unprocessable Entity
         }
 
         if(!Config::get('boilerplate.reset_password.release_token')) {
@@ -63,11 +66,48 @@ class ResetPasswordController extends ApiController
     /**
      * Get the broker to be used during password reset.
      *
+     * TODO: remove this method once Jenssegers\Mongodb reset password issues are fixed
+     * REF: https://github.com/jenssegers/laravel-mongodb/issues/1124
+     *
      * @return \Illuminate\Contracts\Auth\PasswordBroker
      */
     public function broker()
     {
-        return Password::broker();
+        return new class(app()) extends \Jenssegers\Mongodb\Auth\PasswordBrokerManager {
+
+            protected function createTokenRepository(array $config)
+            {
+                $c = $this->app['db']->connection();
+                $h = $this->app['hash'];
+                $t = $config['table'];
+                $k = $this->app['config']['app.key'];
+                $e = $config['expire'];
+
+                return new class($c, $h, $t, $k, $e) extends \Illuminate\Auth\Passwords\DatabaseTokenRepository {
+
+                    protected function getPayload($email, $token)
+                    {
+                        return ['email' => $email, 'token' => $this->hasher->make($token), 'created_at' => new UTCDateTime(time() * 1000)];
+                    }
+
+                    protected function tokenExpired($token)
+                    {
+                        // Convert UTCDateTime to a date string.
+                        if ($token instanceof UTCDateTime) {
+                            $date = $token->toDateTime();
+                            $date->setTimezone(new DateTimeZone(date_default_timezone_get()));
+                            $token = $date->format('Y-m-d H:i:s');
+                        } elseif (is_array($token) and isset($token['date'])) {
+                            $date = new DateTime($token['date'], new DateTimeZone(isset($token['timezone']) ? $token['timezone'] : 'UTC'));
+                            $date->setTimezone(new DateTimeZone(date_default_timezone_get()));
+                            $token = $date->format('Y-m-d H:i:s');
+                        }
+
+                        return parent::tokenExpired($token);
+                    }
+                };
+            }
+        };
     }
 
     /**
