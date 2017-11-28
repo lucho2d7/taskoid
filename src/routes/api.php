@@ -72,10 +72,4 @@ $api->version('v1', function (Router $api) {
             }
         ]);
     });
-
-    $api->get('hello', function() {
-        return response()->json([
-            'message' => 'This is a simple example of item returned by your APIs. Everyone can see it.'
-        ]);
-    });
 });
