@@ -52,12 +52,12 @@ class TaskController extends ApiController
             'title' => 'min:2|max:1020',
             'description' => 'min:2|max:1020',
             'due_date_from' => 'date_format:Y-m-d H:i:s',
-            'due_date_to' => 'date_format:Y-m-d H:i:s',
+            'due_date_to' => 'date_format:Y-m-d H:i:s|after:due_date_from',
             'completed' => 'boolean',
             'created_at_from' => 'date_format:Y-m-d H:i:s',
-            'created_at_to' => 'date_format:Y-m-d H:i:s',
+            'created_at_to' => 'date_format:Y-m-d H:i:s|after:created_at_from',
             'updated_at_from' => 'date_format:Y-m-d H:i:s',
-            'updated_at_to' => 'date_format:Y-m-d H:i:s',
+            'updated_at_to' => 'date_format:Y-m-d H:i:s|after:updated_at_from',
             'user_id' => 'string|min:24|validuserid',
             'page' => 'integer|min:1',
         ]);
@@ -78,8 +78,9 @@ class TaskController extends ApiController
                         ->createdAtTo($request->input('created_at_to'))
                         ->updatedAtFrom($request->input('updated_at_from'))
                         ->updatedAtTo($request->input('updated_at_to'))
-                        ->orderBy('date', 'desc')
-                        ->orderBy('time', 'desc')
+                        ->orderBy('due_date', 'asc')
+                        ->orderBy('created_at', 'asc')
+                        ->orderBy('updated_at', 'asc')
                         ->paginate(5);
 
         return response()->json([
