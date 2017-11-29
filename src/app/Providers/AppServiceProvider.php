@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Validator;
 use Jenssegers\Mongodb\Eloquent\Builder;
 use App\User;
+use DB;
+use Log;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +28,16 @@ class AppServiceProvider extends ServiceProvider
         Validator::extend('validuserid', function ($attribute, $value, $parameters, $validator) {
             return is_object(User::find($value));
         });
+
+        if(env('DB_DEBUG')) {
+            DB::connection()->enableQueryLog();
+            DB::listen(function ($query) {
+                // $query->sql
+                // $query->bindings
+                // $query->time
+                Log::debug($query->sql);
+            });
+        }
     }
 
     /**
