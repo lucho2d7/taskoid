@@ -3,6 +3,8 @@
 namespace App;
 
 use Moloquent;
+use Carbon\Carbon;
+use MongoDB\BSON\UTCDateTime;
 
 class Task extends Moloquent
 {
@@ -133,7 +135,9 @@ class Task extends Moloquent
     public function scopeDueDateFrom($query, $datetime)
     {
         if($datetime) {
-            return $query->where('due_date', '>=', $datetime);
+            $cd = new Carbon($datetime);
+
+            return $query->where('due_date', '>=', new UTCDateTime($cd->timestamp * 1000));
         }
 
         return $query;
@@ -149,7 +153,9 @@ class Task extends Moloquent
     public function scopeDueDateTo($query, $datetime)
     {
         if($datetime) {
-            return $query->where('due_date', '<=', $datetime);
+            $cd = new Carbon($datetime);
+
+            return $query->where('due_date', '<=', new UTCDateTime($cd->timestamp * 1000));
         }
 
         return $query;
@@ -165,7 +171,9 @@ class Task extends Moloquent
     public function scopeCreatedAtFrom($query, $datetime)
     {
         if($datetime) {
-            return $query->where('created_at', '>=', $datetime);
+            $cd = new Carbon($datetime);
+
+            return $query->where('created_at', '>=', new UTCDateTime($cd->timestamp * 1000));
         }
 
         return $query;
@@ -181,7 +189,9 @@ class Task extends Moloquent
     public function scopeCreatedAtTo($query, $datetime)
     {
         if($datetime) {
-            return $query->where('created_at', '<=', $datetime);
+            $cd = new Carbon($datetime);
+
+            return $query->where('created_at', '<=', new UTCDateTime($cd->timestamp * 1000));
         }
 
         return $query;
@@ -197,7 +207,9 @@ class Task extends Moloquent
     public function scopeUpdatedAtFrom($query, $datetime)
     {
         if($datetime) {
-            return $query->where('updated_at', '>=', $datetime);
+            $cd = new Carbon($datetime);
+
+            return $query->where('updated_at', '>=', new UTCDateTime($cd->timestamp * 1000));
         }
 
         return $query;
@@ -213,7 +225,9 @@ class Task extends Moloquent
     public function scopeUpdatedAtTo($query, $datetime)
     {
         if($datetime) {
-            return $query->where('updated_at', '<=', $datetime);
+            $cd = new Carbon($datetime);
+
+            return $query->where('updated_at', '<=', new UTCDateTime($cd->timestamp * 1000));
         }
 
         return $query;
