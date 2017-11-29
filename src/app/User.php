@@ -231,7 +231,7 @@ class User extends Moloquent implements
     {
         if($name)
         {
-            return $query->where('name', 'like', '%'.$name.'%');
+            return $query->where('name', 'regexp', "/$name/i");
         }
 
         return $query;
@@ -248,7 +248,7 @@ class User extends Moloquent implements
     {
         if($email)
         {
-            return $query->where('email', 'like', '%'.$email.'%');
+            return $query->where('email', 'regexp', "/$email/i");
         }
 
         return $query;
