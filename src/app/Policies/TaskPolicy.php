@@ -76,10 +76,15 @@ class TaskPolicy extends BasePolicy
      * @param  \App\Task  $task
      * @return mixed
      */
-    public function update(User $user, Task $task)
+    public function update(User $user, Task $task, $new_user_id)
     {
         // Anyone can update its tasks
         if($user->id === $task->user->id) {
+            // But only Admins can change Task User
+            if(!empty($new_user_id) && $user->id != $new_user_id && !$user->isAdmin()) {
+                return false;
+            }
+
             return true;
         }
 

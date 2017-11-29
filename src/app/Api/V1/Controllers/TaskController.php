@@ -186,7 +186,7 @@ class TaskController extends ApiController
     {
         $currentUser = JWTAuth::parseToken()->authenticate();
 
-        $this->authorize('update', $task);
+        $this->authorize('update', [Task::class, $task, $request->input('user_id')]);
 
         $this->validate($request, [
             'title' => 'required|min:2|max:1020',
@@ -207,6 +207,7 @@ class TaskController extends ApiController
 
         $task->save();
         
+        // Do not return associated user data
         $task->setHidden(['user']);
         
         return response()->json([
