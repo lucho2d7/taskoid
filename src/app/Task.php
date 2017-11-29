@@ -52,6 +52,18 @@ class Task extends Moloquent
     ];
 
     /**
+     * Set completed as boolean, cast for proper MongoDB storage as boolean
+     *
+     * @param  Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $datetime
+     * @return Illuminate\Database\Eloquent\Builder
+     */
+    public function setCompletedAttribute($completed)
+    {
+        $this->attributes['completed'] = (boolean)$completed;
+    }
+
+    /**
      * Get user that owns this task
      *
      * @return App\User
@@ -87,7 +99,7 @@ class Task extends Moloquent
     public function scopeTitlePartial($query, $title)
     {
         if($title) {
-            return $query->where('title', 'like', '%'.$title.'%');
+            return $query->where('title', 'regexp', "/$title/i");
         }
 
         return $query;
@@ -103,7 +115,7 @@ class Task extends Moloquent
     public function scopeDescriptionPartial($query, $description)
     {
         if($description) {
-            return $query->where('description', 'like', '%'.$description.'%');
+            return $query->where('description', 'regexp', "/$description/i");
         }
 
         return $query;
