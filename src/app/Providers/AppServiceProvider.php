@@ -21,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
         Validator::extend('validrole', function ($attribute, $value, $parameters, $validator) {
             return User::isValidRole($value);
         });
+
         Validator::extend('validstatus', function ($attribute, $value, $parameters, $validator) {
             return User::isValidStatus($value);
         });
