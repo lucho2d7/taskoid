@@ -68,6 +68,15 @@ class TaskController extends ApiController
                     ? $request->input('user_id')
                     : $currentUser->_id;
 
+        $user_role = 'user';
+
+        if($currentUser->isSuperAdmin()) {
+            $user_role = '';
+        }
+        else if($currentUser->isAdmin() && $user_id == $currentUser->id) {
+            $user_role = 'admin';
+        }
+
         $tasks = Task::userId($user_id)
                         ->titlePartial($request->input('title'))
                         ->descriptionPartial($request->input('description'))
@@ -78,6 +87,7 @@ class TaskController extends ApiController
                         ->createdAtTo($request->input('created_at_to'))
                         ->updatedAtFrom($request->input('updated_at_from'))
                         ->updatedAtTo($request->input('updated_at_to'))
+                        ->userRole($user_role)
                         ->orderBy('due_date', 'asc')
                         ->orderBy('created_at', 'asc')
                         ->orderBy('updated_at', 'asc')

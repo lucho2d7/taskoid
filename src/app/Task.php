@@ -24,6 +24,7 @@ class Task extends Moloquent
      */
     protected $hidden = [
         //'created_at', 'updated_at',
+        'user_role'
     ];
 
     /**
@@ -54,13 +55,25 @@ class Task extends Moloquent
     /**
      * Set completed as boolean, cast for proper MongoDB storage as boolean
      *
-     * @param  Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $datetime
-     * @return Illuminate\Database\Eloquent\Builder
+     * @param  boolean  $completed
      */
     public function setCompletedAttribute($completed)
     {
         $this->attributes['completed'] = (boolean)$completed;
+    }
+
+    /**
+     * Set user_id and also set user_role
+     *
+     * @param  boolean  $completed
+     */
+    public function setUserIdAttribute($user_id)
+    {
+        $this->attributes['user_id'] = $user_id;
+
+        $owner = User::find($user_id);
+
+        $this->attributes['user_role'] = $owner->role;
     }
 
     /**
@@ -240,6 +253,22 @@ class Task extends Moloquent
             $cd = new Carbon($datetime);
 
             return $query->where('updated_at', '<=', new UTCDateTime($cd->timestamp * 1000));
+        }
+
+        return $query;
+    }
+
+    /**
+     * User owner role
+     *
+     * @param  Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $$role
+     * @return Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeUserRole($query, $role)
+    {
+        if($role) {
+            return $query->where('user_role', '=', $role);
         }
 
         return $query;
