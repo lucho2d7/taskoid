@@ -32,3 +32,19 @@ $factory->define(Task::class, function (Faker\Generator $faker) {
         }*/
     ];
 });
+
+$factory->state(App\Task::class, 'invalid', function ($faker) {
+
+    $created_at = $faker->dateTimeBetween('-3 month', 'now');
+    $due_date = $faker->dateTimeBetween($created_at, '+3 month');
+    $updated_at = $faker->dateTimeBetween($created_at, $due_date);
+    
+    return [
+        'title' => 'a',
+        'description' => $faker->realText($faker->numberBetween(2000, 3000)),
+        'completed' => $faker->realText($faker->numberBetween(10, 100)),
+        'due_date' => $due_date,
+        'created_at' => $created_at,
+        'updated_at' => $updated_at,
+    ];
+});
