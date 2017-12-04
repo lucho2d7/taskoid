@@ -124,7 +124,6 @@ class SignUpController extends ApiController
             ], 201);
         }
 
-        //$token = $JWTAuth->fromUser($user);
         return response()->json([
             'status' => 'ok',
             'token' => $token
