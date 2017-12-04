@@ -19,7 +19,7 @@ $factory->define(User::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->unique()->safeEmail,
-        'password' => $password ?: $password = 'secret',
+        'password' => $password ?: $password = 'secret01',
         'remember_token' => str_random(10),
         'role' => User::ROLE_USER,
         'status' => User::STATUS_ENABLED,
