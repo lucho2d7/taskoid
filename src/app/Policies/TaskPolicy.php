@@ -74,6 +74,7 @@ class TaskPolicy extends BasePolicy
      *
      * @param  \App\User  $user
      * @param  \App\Task  $task
+     * @param  string  $new_user_id
      * @return mixed
      */
     public function update(User $user, Task $task, $new_user_id)
