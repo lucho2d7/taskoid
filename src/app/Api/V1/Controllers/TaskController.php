@@ -82,7 +82,6 @@ class TaskController extends ApiController
         $key = md5(serialize([$user_id, $user_role, $request->all()]));
 
         $tasks = Cache::tags('tasks')->remember($key, 10, function() use ($user_id, $user_role, $request) {
-            Log::debug($user_id);
             return Task::userId($user_id)
                         ->titlePartial($request->input('title'))
                         ->descriptionPartial($request->input('description'))
