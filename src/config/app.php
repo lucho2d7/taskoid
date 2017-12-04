@@ -182,6 +182,8 @@ return [
 
         Jenssegers\Mongodb\MongodbServiceProvider::class,
         Jenssegers\Mongodb\Auth\PasswordResetServiceProvider::class,
+
+        Laravel\Tinker\TinkerServiceProvider::class,
     ],
 
     /*
