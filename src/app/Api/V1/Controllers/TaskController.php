@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Task resource representation.
@@ -66,7 +68,7 @@ class TaskController extends ApiController
 
         $user_id = ($currentUser->isSuperAdmin() || $currentUser->isAdmin())
                     ? $request->input('user_id')
-                    : $currentUser->_id;
+                    : $currentUser->id;
 
         $user_role = 'user';
 
@@ -77,7 +79,11 @@ class TaskController extends ApiController
             $user_role = 'admin';
         }
 
-        $tasks = Task::userId($user_id)
+        $key = md5(serialize([$user_id, $user_role, $request->all()]));
+
+        $tasks = Cache::tags('tasks')->remember($key, 10, function() use ($user_id, $user_role, $request) {
+            Log::debug($user_id);
+            return Task::userId($user_id)
                         ->titlePartial($request->input('title'))
                         ->descriptionPartial($request->input('description'))
                         ->completed($request->has('completed'), $request->input('completed'))
@@ -92,6 +98,7 @@ class TaskController extends ApiController
                         ->orderBy('created_at', 'asc')
                         ->orderBy('updated_at', 'asc')
                         ->paginate(5);
+        });
 
         return response()->json([
                 'status' => 'ok',
@@ -139,6 +146,8 @@ class TaskController extends ApiController
 
         $task->save();
         
+        Cache::tags('tasks')->flush();
+
         $task->setHidden(['user']);
         
         return response()->json([
@@ -216,6 +225,8 @@ class TaskController extends ApiController
         }
 
         $task->save();
+
+        Cache::tags('tasks')->flush();
         
         // Do not return associated user data
         $task->setHidden(['user']);
@@ -245,6 +256,8 @@ class TaskController extends ApiController
         $this->authorize('delete', $task);
 
         $task->delete();
+
+        Cache::tags('tasks')->flush();
 
         return response()->json([
                 'status' => 'ok'
