@@ -21,7 +21,7 @@ Create a REST web service (API only no web ui needed) of a TO DO list. The actio
 - [x] The exercise must be developed in PHP.
 - [x] You CAN use any framework that you want with no restrictions.
 - [x] You MUST use a MongoDB Database.
-- [ ] The list of all result must be cached with Redis or Memcached.
+- [x] The list of all result must be cached with Redis or Memcached.
 - [x] Take care of the validations of the required fields.
 
 ### Task Schema:
