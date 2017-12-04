@@ -147,12 +147,12 @@ class TaskController extends ApiController
         
         Cache::tags('tasks')->flush();
 
-        $task->setHidden(['user']);
+        $task->setHidden(['user', 'user_role']);
         
         return response()->json([
                 'status' => 'ok',
                 'task' => $task
-            ], 200);
+            ], 201);
     }
 
     /**
@@ -173,7 +173,7 @@ class TaskController extends ApiController
     {
     	$this->authorize('view', $task);
     	
-        $task->setHidden(['user']);
+        $task->setHidden(['user', 'user_role']);
 
     	return response()->json([
                 'status' => 'ok',
@@ -228,7 +228,7 @@ class TaskController extends ApiController
         Cache::tags('tasks')->flush();
         
         // Do not return associated user data
-        $task->setHidden(['user']);
+        $task->setHidden(['user', 'user_role']);
         
         return response()->json([
                 'status' => 'ok',
