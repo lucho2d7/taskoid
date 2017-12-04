@@ -220,7 +220,7 @@ class TaskControllerRegularUserTest extends TestCase
             'task' => [
                 'title' => $task->title,
                 'description' => $task->description,
-                'completed' => true,
+                'completed' => $task->completed,
                 'due_date' => $task->due_date->format('Y-m-d H:m:s'),
                 'user_id' => $this->user->id
             ],
