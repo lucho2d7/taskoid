@@ -12,6 +12,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use MongoDB\BSON\UTCDateTime;
 use DateTimeZone;
 use DateTime;
+use Illuminate\Support\Facades\Log;
 
 /**
  * User password reset function.
@@ -52,7 +53,8 @@ class ResetPasswordController extends ApiController
         $response = ['status' => 'ok'];
 
         if(Config::get('boilerplate.reset_password.release_token')) {
-            $response['token'] = $JWTAuth->fromUser($user);
+            $currentUser = User::email($request->input('email'))->first();
+            $response['token'] = $JWTAuth->fromUser($currentUser);
         }
 
         return response()->json($response, 200);
