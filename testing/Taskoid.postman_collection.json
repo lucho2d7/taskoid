@@ -1395,6 +1395,64 @@
 					"response": []
 				},
 				{
+					"name": "Task GET (Filter by title)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"tasks variable set\"] = jsonData.tasks;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?title={{title}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "{{title}}",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Task GET (Filter by description)",
 					"event": [
 						{
@@ -1431,7 +1489,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:8081/api/tasks?description=politely",
+							"raw": "http://localhost:8081/api/tasks?description={{description}}",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1444,7 +1502,7 @@
 							"query": [
 								{
 									"key": "description",
-									"value": "politely",
+									"value": "{{description}}",
 									"equals": true
 								}
 							]
@@ -1569,6 +1627,120 @@
 					"response": []
 				},
 				{
+					"name": "Task GET (invalid filters)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 422\"] = responseCode.code === 422;",
+									"",
+									"tests[\"error variable set\"] = jsonData.error;",
+									"tests[\"error.status_code variable set\"] = jsonData.error.status_code;",
+									"tests[\"error.errors variable set\"] = jsonData.error.errors;",
+									"",
+									"tests[\"error.errors.title variable set\"] = jsonData.error.errors.title;",
+									"tests[\"error.errors.description variable set\"] = jsonData.error.errors.description;",
+									"tests[\"error.errors.due_date_from variable set\"] = jsonData.error.errors.due_date_from;",
+									"tests[\"error.errors.due_date_to variable set\"] = jsonData.error.errors.due_date_to;",
+									"tests[\"error.errors.completed variable set\"] = jsonData.error.errors.completed;",
+									"tests[\"error.errors.created_at_from variable set\"] = jsonData.error.errors.created_at_from;",
+									"tests[\"error.errors.created_at_to variable set\"] = jsonData.error.errors.created_at_to;",
+									"tests[\"error.errors.updated_at_from variable set\"] = jsonData.error.errors.updated_at_from;",
+									"tests[\"error.errors.updated_at_to variable set\"] = jsonData.error.errors.updated_at_to;",
+									"tests[\"error.errors.page variable set\"] = jsonData.error.errors.page;",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?completed=oiewjfowi&title=e&description=1&due_date_from=39939&due_date_to=49994&created_at_from=9393&created_at_to=39993&updated_at_from=34929&updated_at_to=9350230&page=fioejeoiwjfoi",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "completed",
+									"value": "oiewjfowi",
+									"equals": true
+								},
+								{
+									"key": "title",
+									"value": "e",
+									"equals": true
+								},
+								{
+									"key": "description",
+									"value": "1",
+									"equals": true
+								},
+								{
+									"key": "due_date_from",
+									"value": "39939",
+									"equals": true
+								},
+								{
+									"key": "due_date_to",
+									"value": "49994",
+									"equals": true
+								},
+								{
+									"key": "created_at_from",
+									"value": "9393",
+									"equals": true
+								},
+								{
+									"key": "created_at_to",
+									"value": "39993",
+									"equals": true
+								},
+								{
+									"key": "updated_at_from",
+									"value": "34929",
+									"equals": true
+								},
+								{
+									"key": "updated_at_to",
+									"value": "9350230",
+									"equals": true
+								},
+								{
+									"key": "page",
+									"value": "fioejeoiwjfoi",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Task PUT",
 					"event": [
 						{
@@ -1635,6 +1807,97 @@
 								{
 									"key": "completed",
 									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks/{{some_task_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks",
+								"{{some_task_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task PUT set other user 403",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 403\"] = responseCode.code === 403;",
+									"",
+									"tests[\"error variable set\"] = jsonData.error;"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"let utils = eval(globals.loadUtils);",
+									"postman.setEnvironmentVariable(\"title\", utils.randomTitle());",
+									"postman.setEnvironmentVariable(\"description\", utils.randomDescription());"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "title",
+									"value": "{{title}}",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "{{description}}",
+									"type": "text"
+								},
+								{
+									"key": "due_date",
+									"value": "2017-12-16 18:23:55",
+									"type": "text"
+								},
+								{
+									"key": "completed",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "9032804923043",
+									"description": "",
 									"type": "text"
 								}
 							]
@@ -2384,6 +2647,64 @@
 					"response": []
 				},
 				{
+					"name": "User GET by name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"users variable set\"] = jsonData.users;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/users?name=er",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "er",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "User POST add",
 					"event": [
 						{
@@ -3080,7 +3401,7 @@
 					"response": []
 				},
 				{
-					"name": "Task POST add 403",
+					"name": "Task POST add to inexistent user 403",
 					"event": [
 						{
 							"listen": "test",
@@ -3235,6 +3556,98 @@
 								{
 									"key": "completed",
 									"value": "0",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks/{{some_task_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks",
+								"{{some_task_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task PUT set to inexistent user 422",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 422\"] = responseCode.code === 422;",
+									"",
+									"tests[\"error variable set\"] = jsonData.error;"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"let utils = eval(globals.loadUtils);",
+									"postman.setEnvironmentVariable(\"title\", utils.randomTitle());",
+									"postman.setEnvironmentVariable(\"description\", utils.randomDescription());"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "title",
+									"value": "{{title}}",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "{{description}}",
+									"type": "text"
+								},
+								{
+									"key": "due_date",
+									"value": "2017-11-29 18:23:55",
+									"type": "text"
+								},
+								{
+									"key": "completed",
+									"value": "0",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "user_id",
+									"value": "99999999999999999",
+									"description": "",
 									"type": "text"
 								}
 							]
@@ -3432,6 +3845,64 @@
 					"response": []
 				},
 				{
+					"name": "Task GET (Filter by title)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"tasks variable set\"] = jsonData.tasks;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?title=ar",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "ar",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Task GET (Filter by description)",
 					"event": [
 						{
@@ -3468,7 +3939,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:8081/api/tasks?description=politely",
+							"raw": "http://localhost:8081/api/tasks?description=pol",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -3481,7 +3952,7 @@
 							"query": [
 								{
 									"key": "description",
-									"value": "politely",
+									"value": "pol",
 									"equals": true
 								}
 							]
@@ -3490,7 +3961,7 @@
 					"response": []
 				},
 				{
-					"name": "Task GET (Filter by completed)",
+					"name": "Task GET (Filter by completed true)",
 					"event": [
 						{
 							"listen": "test",
@@ -3504,7 +3975,83 @@
 									"tests[\"status variable set\"] = jsonData.status;",
 									"tests[\"tasks variable set\"] = jsonData.tasks;",
 									"",
-									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"all_tasks_are_completed = true;",
+									"for (var i = 0; i < jsonData.tasks.data.length; i++) {",
+									"    // Iterate over numeric indexes from 0 to 5, as everyone expects.",
+									"    if(!jsonData.tasks.data[i].completed) {",
+									"        all_tasks_are_completed = false;",
+									"    }",
+									"}",
+									"tests[\"all tasks are completed\"] = all_tasks_are_completed;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?completed=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "completed",
+									"value": "1",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task GET (Filter by completed false)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"tasks variable set\"] = jsonData.tasks;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"all_tasks_are_not_completed = true;",
+									"for (var i = 0; i < jsonData.tasks.data.length; i++) {",
+									"    // Iterate over numeric indexes from 0 to 5, as everyone expects.",
+									"    if(jsonData.tasks.data[i].completed) {",
+									"        all_tasks_are_not_completed = false;",
+									"    }",
+									"}",
+									"tests[\"all tasks are not completed\"] = all_tasks_are_not_completed;"
 								]
 							}
 						}
@@ -3611,6 +4158,402 @@
 								{
 									"key": "user_id",
 									"value": "{{some_user_id}}",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task GET (Filter by created_at)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"tasks variable set\"] = jsonData.tasks;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?created_at_from=2017-10-01 00:56:05&created_at_to=2017-10-29 12:56:15",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "created_at_from",
+									"value": "2017-10-01 00:56:05",
+									"equals": true
+								},
+								{
+									"key": "created_at_to",
+									"value": "2017-10-29 12:56:15",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task GET (Filter by updated_at)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"tasks variable set\"] = jsonData.tasks;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?updated_at_from=2017-10-01 00:08:36&updated_at_to=2017-10-30 10:45:06",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "updated_at_from",
+									"value": "2017-10-01 00:08:36",
+									"equals": true
+								},
+								{
+									"key": "updated_at_to",
+									"value": "2017-10-30 10:45:06",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task GET (Filter by due_date)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"tasks variable set\"] = jsonData.tasks;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?due_date_from=2017-11-01 05:48:36&due_date_to=2017-12-27 17:53:20",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "due_date_from",
+									"value": "2017-11-01 05:48:36",
+									"equals": true
+								},
+								{
+									"key": "due_date_to",
+									"value": "2017-12-27 17:53:20",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task GET (Filter by many fields)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"tasks variable set\"] = jsonData.tasks;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?created_at_from=2017-10-01 00:56:05&created_at_to=2017-10-29 12:56:15&updated_at_from=2017-10-01 00:08:36&updated_at_to=2017-10-30 10:45:06&due_date_from=2017-10-01 05:48:36&due_date_to=2017-12-27 17:53:20&completed=0&description=the",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "created_at_from",
+									"value": "2017-10-01 00:56:05",
+									"equals": true
+								},
+								{
+									"key": "created_at_to",
+									"value": "2017-10-29 12:56:15",
+									"equals": true
+								},
+								{
+									"key": "updated_at_from",
+									"value": "2017-10-01 00:08:36",
+									"equals": true
+								},
+								{
+									"key": "updated_at_to",
+									"value": "2017-10-30 10:45:06",
+									"equals": true
+								},
+								{
+									"key": "due_date_from",
+									"value": "2017-10-01 05:48:36",
+									"equals": true
+								},
+								{
+									"key": "due_date_to",
+									"value": "2017-12-27 17:53:20",
+									"equals": true
+								},
+								{
+									"key": "completed",
+									"value": "0",
+									"equals": true
+								},
+								{
+									"key": "description",
+									"value": "the",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task GET (invalid filters)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 422\"] = responseCode.code === 422;",
+									"",
+									"tests[\"error variable set\"] = jsonData.error;",
+									"tests[\"error.status_code variable set\"] = jsonData.error.status_code;",
+									"tests[\"error.errors variable set\"] = jsonData.error.errors;",
+									"",
+									"tests[\"error.errors.title variable set\"] = jsonData.error.errors.title;",
+									"tests[\"error.errors.description variable set\"] = jsonData.error.errors.description;",
+									"tests[\"error.errors.due_date_from variable set\"] = jsonData.error.errors.due_date_from;",
+									"tests[\"error.errors.due_date_to variable set\"] = jsonData.error.errors.due_date_to;",
+									"tests[\"error.errors.completed variable set\"] = jsonData.error.errors.completed;",
+									"tests[\"error.errors.created_at_from variable set\"] = jsonData.error.errors.created_at_from;",
+									"tests[\"error.errors.created_at_to variable set\"] = jsonData.error.errors.created_at_to;",
+									"tests[\"error.errors.updated_at_from variable set\"] = jsonData.error.errors.updated_at_from;",
+									"tests[\"error.errors.updated_at_to variable set\"] = jsonData.error.errors.updated_at_to;",
+									"tests[\"error.errors.page variable set\"] = jsonData.error.errors.page;",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?completed=oiewjfowi&title=e&description=1&due_date_from=39939&due_date_to=49994&created_at_from=9393&created_at_to=39993&updated_at_from=34929&updated_at_to=9350230&page=fioejeoiwjfoi",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "completed",
+									"value": "oiewjfowi",
+									"equals": true
+								},
+								{
+									"key": "title",
+									"value": "e",
+									"equals": true
+								},
+								{
+									"key": "description",
+									"value": "1",
+									"equals": true
+								},
+								{
+									"key": "due_date_from",
+									"value": "39939",
+									"equals": true
+								},
+								{
+									"key": "due_date_to",
+									"value": "49994",
+									"equals": true
+								},
+								{
+									"key": "created_at_from",
+									"value": "9393",
+									"equals": true
+								},
+								{
+									"key": "created_at_to",
+									"value": "39993",
+									"equals": true
+								},
+								{
+									"key": "updated_at_from",
+									"value": "34929",
+									"equals": true
+								},
+								{
+									"key": "updated_at_to",
+									"value": "9350230",
+									"equals": true
+								},
+								{
+									"key": "page",
+									"value": "fioejeoiwjfoi",
 									"equals": true
 								}
 							]
