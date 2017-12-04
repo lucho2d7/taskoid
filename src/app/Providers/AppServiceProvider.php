@@ -37,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
                 // $query->bindings
                 // $query->time
                 Log::debug($query->sql);
+                Log::debug($query->bindings);
             });
         }
     }
