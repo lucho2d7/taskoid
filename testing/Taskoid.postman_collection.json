@@ -1110,14 +1110,14 @@
 								"exec": [
 									"var jsonData = JSON.parse(responseBody);",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
 									"",
 									"tests[\"status variable set\"] = jsonData.status;",
 									"tests[\"task variable set\"] = jsonData.task;",
 									"",
 									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
 									"",
-									"some_task_id = jsonData.task.user_id ? jsonData.task._id : 0;",
+									"some_task_id = jsonData.task._id ? jsonData.task._id : 0;",
 									"postman.setEnvironmentVariable(\"some_task_id\", some_task_id);"
 								]
 							}
@@ -1525,7 +1525,15 @@
 									"tests[\"status variable set\"] = jsonData.status;",
 									"tests[\"tasks variable set\"] = jsonData.tasks;",
 									"",
-									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"all_tasks_are_not_completed = true;",
+									"for (var i = 0; i < jsonData.tasks.data.length; i++) {",
+									"    if(jsonData.tasks.data[i].completed) {",
+									"        all_tasks_are_not_completed = false;",
+									"    }",
+									"}",
+									"tests[\"all tasks are not completed\"] = all_tasks_are_not_completed;"
 								]
 							}
 						}
@@ -1583,7 +1591,15 @@
 									"tests[\"status variable set\"] = jsonData.status;",
 									"tests[\"tasks variable set\"] = jsonData.tasks;",
 									"",
-									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"all_tasks_are_completed = true;",
+									"for (var i = 0; i < jsonData.tasks.data.length; i++) {",
+									"    if(!jsonData.tasks.data[i].completed) {",
+									"        all_tasks_are_completed = false;",
+									"    }",
+									"}",
+									"tests[\"all tasks are completed\"] = all_tasks_are_completed;"
 								]
 							}
 						}
@@ -2243,7 +2259,8 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{token}}",
+								"disabled": true
 							}
 						],
 						"body": {
@@ -2346,6 +2363,87 @@
 								{
 									"key": "password",
 									"value": "{{valid_password}}",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pwd reset bad",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 422\"] = responseCode.code === 422;",
+									"",
+									"tests[\"error variable set\"] = jsonData.error;"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"let utils = eval(globals.loadUtils);",
+									"postman.setEnvironmentVariable(\"valid_password\", utils.randomPwd());"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/auth/reset?email={{invalid_email}}&password={{invalid_password}}&password_confirmation={{invalid_password}}&token=invalid_token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"auth",
+								"reset"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "{{invalid_email}}",
+									"equals": true
+								},
+								{
+									"key": "password",
+									"value": "{{invalid_password}}",
+									"equals": true
+								},
+								{
+									"key": "password_confirmation",
+									"value": "{{invalid_password}}",
+									"equals": true
+								},
+								{
+									"key": "token",
+									"value": "invalid_token",
 									"equals": true
 								}
 							]
@@ -2705,7 +2803,7 @@
 					"response": []
 				},
 				{
-					"name": "User POST add",
+					"name": "User GET by role user",
 					"event": [
 						{
 							"listen": "test",
@@ -2715,6 +2813,182 @@
 									"var jsonData = JSON.parse(responseBody);",
 									"",
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"users variable set\"] = jsonData.users;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"all_users_are_regular_users = true;",
+									"for (var i = 0; i < jsonData.users.data.length; i++) {",
+									"    if(jsonData.users.data[i].role != 'user') {",
+									"        all_users_are_regular_users = false;",
+									"    }",
+									"}",
+									"tests[\"all users are regular users\"] = all_users_are_regular_users;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/users?role=user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users"
+							],
+							"query": [
+								{
+									"key": "role",
+									"value": "user",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User GET by role admin 403",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 403\"] = responseCode.code === 403;",
+									"",
+									"tests[\"error variable set\"] = jsonData.error;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/users?role=admin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users"
+							],
+							"query": [
+								{
+									"key": "role",
+									"value": "admin",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User GET by role superadmin 403",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 403\"] = responseCode.code === 403;",
+									"",
+									"tests[\"error variable set\"] = jsonData.error;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/users?role=superadmin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users"
+							],
+							"query": [
+								{
+									"key": "role",
+									"value": "superadmin",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User POST add",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
 									"",
 									"tests[\"status variable set\"] = jsonData.status;",
 									"tests[\"user variable set\"] = jsonData.user;",
@@ -2908,7 +3182,7 @@
 					"response": []
 				},
 				{
-					"name": "User POST add superadmin 403 copy",
+					"name": "User POST add superadmin 403",
 					"event": [
 						{
 							"listen": "test",
@@ -2979,7 +3253,7 @@
 								},
 								{
 									"key": "role",
-									"value": "admin",
+									"value": "superadmin",
 									"description": "",
 									"type": "text"
 								},
@@ -3207,7 +3481,7 @@
 					"response": []
 				},
 				{
-					"name": "User PUT edit superadmin 403 copy",
+					"name": "User PUT edit superadmin 403",
 					"event": [
 						{
 							"listen": "test",
@@ -3315,7 +3589,7 @@
 								"exec": [
 									"var jsonData = JSON.parse(responseBody);",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
 									"",
 									"tests[\"status variable set\"] = jsonData.status;",
 									"tests[\"task variable set\"] = jsonData.task;",
@@ -3979,7 +4253,6 @@
 									"",
 									"all_tasks_are_completed = true;",
 									"for (var i = 0; i < jsonData.tasks.data.length; i++) {",
-									"    // Iterate over numeric indexes from 0 to 5, as everyone expects.",
 									"    if(!jsonData.tasks.data[i].completed) {",
 									"        all_tasks_are_completed = false;",
 									"    }",
@@ -4046,7 +4319,6 @@
 									"",
 									"all_tasks_are_not_completed = true;",
 									"for (var i = 0; i < jsonData.tasks.data.length; i++) {",
-									"    // Iterate over numeric indexes from 0 to 5, as everyone expects.",
 									"    if(jsonData.tasks.data[i].completed) {",
 									"        all_tasks_are_not_completed = false;",
 									"    }",
@@ -4115,10 +4387,7 @@
 									"",
 									"all_tasks_belong_to_user = true;",
 									"for (var i = 0; i < jsonData.tasks.data.length; i++) {",
-									"    // Iterate over numeric indexes from 0 to 5, as everyone expects.",
 									"    if(jsonData.tasks.data[i].user_id != some_user_id) {",
-									"        console.log(jsonData.tasks.data[i].user_id);",
-									"        console.log(some_user_id);",
 									"        all_tasks_belong_to_user = false;",
 									"    }",
 									"}",
@@ -4778,57 +5047,6 @@
 					"response": []
 				},
 				{
-					"name": "Users GET",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"var jsonData = JSON.parse(responseBody);",
-									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
-									"",
-									"tests[\"status variable set\"] = jsonData.status;",
-									"tests[\"users variable set\"] = jsonData.users;",
-									"",
-									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "{{accept_header}}"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "http://localhost:8081/api/users",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8081",
-							"path": [
-								"api",
-								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "invalid method 404",
 					"event": [
 						{
@@ -4953,6 +5171,7 @@
 									"tests[\"Token is not empty\"] = jsonData.token !== undefined && jsonData.token !== \"\";",
 									"",
 									"postman.setEnvironmentVariable(\"token\", jsonData.token);",
+									"postman.setEnvironmentVariable(\"current_user_id\", jsonData._id);",
 									""
 								]
 							}
@@ -4999,7 +5218,182 @@
 					"response": []
 				},
 				{
-					"name": "Users GET",
+					"name": "Users GET list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"tests[\"users variable set\"] = jsonData.users;",
+									"tests[\"users.current_page variable set\"] = jsonData.users.current_page;",
+									"tests[\"users.data variable set\"] = jsonData.users.data;",
+									"tests[\"non empty task list\"] = jsonData.users.data.length > 0;",
+									"",
+									"some_user_id = jsonData.users.data[0] ? jsonData.users.data[0]._id : 0;",
+									"postman.setEnvironmentVariable(\"some_user_id\", some_user_id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Users GET list page 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"tests[\"users variable set\"] = jsonData.users;",
+									"tests[\"users.current_page variable set\"] = jsonData.users.current_page;",
+									"tests[\"users.data variable set\"] = jsonData.users.data;",
+									"tests[\"non empty task list\"] = jsonData.users.data.length > 0;",
+									"",
+									"some_user_id = jsonData.users.data[0] ? jsonData.users.data[0]._id : 0;",
+									"postman.setEnvironmentVariable(\"some_user_id\", some_user_id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/users?page=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User GET by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"user variable set\"] = jsonData.user;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/users/{{some_user_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users",
+								"{{some_user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User GET by name",
 					"event": [
 						{
 							"listen": "test",
@@ -5014,6 +5408,72 @@
 									"tests[\"users variable set\"] = jsonData.users;",
 									"",
 									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/users?name=er",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "er",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User GET by role user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"users variable set\"] = jsonData.users;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"all_users_are_regular_users = true;",
+									"for (var i = 0; i < jsonData.users.data.length; i++) {",
+									"    if(jsonData.users.data[i].role != 'user') {",
+									"        all_users_are_regular_users = false;",
+									"    }",
+									"}",
+									"tests[\"all users are regular users\"] = all_users_are_regular_users;"
 								]
 							}
 						}
@@ -5051,6 +5511,2314 @@
 									"value": "user",
 									"equals": true
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User GET by role admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"users variable set\"] = jsonData.users;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"all_users_are_admins = true;",
+									"for (var i = 0; i < jsonData.users.data.length; i++) {",
+									"    if(jsonData.users.data[i].role != 'admin') {",
+									"        all_users_are_admins = false;",
+									"    }",
+									"}",
+									"tests[\"all users are admins\"] = all_users_are_admins;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/users?role=admin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users"
+							],
+							"query": [
+								{
+									"key": "role",
+									"value": "admin",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User GET by role superadmin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"users variable set\"] = jsonData.users;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"all_users_are_superadmins = true;",
+									"for (var i = 0; i < jsonData.users.data.length; i++) {",
+									"    if(jsonData.users.data[i].role != 'superadmin') {",
+									"        all_users_are_superadmins = false;",
+									"    }",
+									"}",
+									"tests[\"all users are superadmins\"] = all_users_are_superadmins;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/users?role=superadmin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users"
+							],
+							"query": [
+								{
+									"key": "role",
+									"value": "superadmin",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User POST add",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"user variable set\"] = jsonData.user;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"some_user_id = jsonData.user._id ? jsonData.user._id : 0;",
+									"postman.setEnvironmentVariable(\"some_user_id\", some_user_id);"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"let utils = eval(globals.loadUtils);",
+									"postman.setEnvironmentVariable(\"name\", utils.randomName());",
+									"postman.setEnvironmentVariable(\"valid_email\", utils.randomEmail());",
+									"postman.setEnvironmentVariable(\"valid_password\", utils.randomPwd());"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "{{name}}",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "{{valid_email}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{valid_password}}",
+									"type": "text"
+								},
+								{
+									"key": "password_confirmation",
+									"value": "{{valid_password}}",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "user",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "enabled",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User POST add admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"user variable set\"] = jsonData.user;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"some_user_id = jsonData.user._id ? jsonData.user._id : 0;",
+									"postman.setEnvironmentVariable(\"some_user_id\", some_user_id);"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"let utils = eval(globals.loadUtils);",
+									"postman.setEnvironmentVariable(\"name\", utils.randomName());",
+									"postman.setEnvironmentVariable(\"valid_email\", utils.randomEmail());",
+									"postman.setEnvironmentVariable(\"valid_password\", utils.randomPwd());"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "{{name}}",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "{{valid_email}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{valid_password}}",
+									"type": "text"
+								},
+								{
+									"key": "password_confirmation",
+									"value": "{{valid_password}}",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "admin",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "enabled",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User POST add superadmin 403",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 403\"] = responseCode.code === 403;",
+									"",
+									"tests[\"error variable set\"] = jsonData.error;"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"let utils = eval(globals.loadUtils);",
+									"postman.setEnvironmentVariable(\"name\", utils.randomName());",
+									"postman.setEnvironmentVariable(\"valid_email\", utils.randomEmail());",
+									"postman.setEnvironmentVariable(\"valid_password\", utils.randomPwd());"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "{{name}}",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "{{valid_email}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{valid_password}}",
+									"type": "text"
+								},
+								{
+									"key": "password_confirmation",
+									"value": "{{valid_password}}",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "superadmin",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "enabled",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User PUT edit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"let utils = eval(globals.loadUtils);",
+									"postman.setEnvironmentVariable(\"name\", utils.randomName());",
+									"postman.setEnvironmentVariable(\"valid_email\", utils.randomEmail());",
+									"postman.setEnvironmentVariable(\"valid_password\", utils.randomPwd());"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "{{name}}",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "{{valid_email}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{valid_password}}",
+									"type": "text"
+								},
+								{
+									"key": "password_confirmation",
+									"value": "{{valid_password}}",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "user",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "enabled",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/users/{{some_user_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users",
+								"{{some_user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User PUT edit admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"let utils = eval(globals.loadUtils);",
+									"postman.setEnvironmentVariable(\"name\", utils.randomName());",
+									"postman.setEnvironmentVariable(\"valid_email\", utils.randomEmail());",
+									"postman.setEnvironmentVariable(\"valid_password\", utils.randomPwd());"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "{{name}}",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "{{valid_email}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{valid_password}}",
+									"type": "text"
+								},
+								{
+									"key": "password_confirmation",
+									"value": "{{valid_password}}",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "enabled",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/users/{{some_user_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users",
+								"{{some_user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User PUT edit superadmin 403",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 403\"] = responseCode.code === 403;",
+									"",
+									"tests[\"error variable set\"] = jsonData.error;"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"let utils = eval(globals.loadUtils);",
+									"postman.setEnvironmentVariable(\"name\", utils.randomName());",
+									"postman.setEnvironmentVariable(\"valid_email\", utils.randomEmail());",
+									"postman.setEnvironmentVariable(\"valid_password\", utils.randomPwd());"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "{{name}}",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "{{valid_email}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{valid_password}}",
+									"type": "text"
+								},
+								{
+									"key": "password_confirmation",
+									"value": "{{valid_password}}",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "superadmin",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "enabled",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/users/{{some_user_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users",
+								"{{some_user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task POST add",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"task variable set\"] = jsonData.task;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"some_task_id = jsonData.task.user_id ? jsonData.task._id : 0;",
+									"postman.setEnvironmentVariable(\"some_task_id\", some_task_id);"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"let utils = eval(globals.loadUtils);",
+									"postman.setEnvironmentVariable(\"title\", utils.randomTitle());",
+									"postman.setEnvironmentVariable(\"description\", utils.randomDescription());"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "title",
+									"value": "{{title}}",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "{{description}}",
+									"type": "text"
+								},
+								{
+									"key": "due_date",
+									"value": "2017-12-27 15:15:00",
+									"type": "text"
+								},
+								{
+									"key": "completed",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "{{some_user_id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task POST add to inexistent user 422",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 422\"] = responseCode.code === 422;",
+									"",
+									"tests[\"error variable set\"] = jsonData.error;"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"let utils = eval(globals.loadUtils);",
+									"postman.setEnvironmentVariable(\"title\", utils.randomTitle());",
+									"postman.setEnvironmentVariable(\"description\", utils.randomDescription());"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "title",
+									"value": "{{title}}",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "{{description}}",
+									"type": "text"
+								},
+								{
+									"key": "due_date",
+									"value": "2017-12-27 15:15:00",
+									"type": "text"
+								},
+								{
+									"key": "completed",
+									"value": "0",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "j938djj9d38uswe98u9w",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task PUT",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"let utils = eval(globals.loadUtils);",
+									"postman.setEnvironmentVariable(\"title\", utils.randomTitle());",
+									"postman.setEnvironmentVariable(\"description\", utils.randomDescription());"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "title",
+									"value": "{{title}}",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "{{description}}",
+									"type": "text"
+								},
+								{
+									"key": "due_date",
+									"value": "2017-11-29 18:23:55",
+									"type": "text"
+								},
+								{
+									"key": "completed",
+									"value": "0",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks/{{some_task_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks",
+								"{{some_task_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task PUT set to inexistent user 422",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 422\"] = responseCode.code === 422;",
+									"",
+									"tests[\"error variable set\"] = jsonData.error;"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"let utils = eval(globals.loadUtils);",
+									"postman.setEnvironmentVariable(\"title\", utils.randomTitle());",
+									"postman.setEnvironmentVariable(\"description\", utils.randomDescription());"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "title",
+									"value": "{{title}}",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "{{description}}",
+									"type": "text"
+								},
+								{
+									"key": "due_date",
+									"value": "2017-11-29 18:23:55",
+									"type": "text"
+								},
+								{
+									"key": "completed",
+									"value": "0",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "user_id",
+									"value": "99999999999999999",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks/{{some_task_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks",
+								"{{some_task_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tasks GET list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"tests[\"tasks variable set\"] = jsonData.tasks;",
+									"tests[\"tasks.current_page variable set\"] = jsonData.tasks.current_page;",
+									"tests[\"tasks.data variable set\"] = jsonData.tasks.data;",
+									"tests[\"non empty task list\"] = jsonData.tasks.data.length > 0;",
+									"",
+									"some_task_id = jsonData.tasks.data[0] ? jsonData.tasks.data[0]._id : 0;",
+									"postman.setEnvironmentVariable(\"some_task_id\", some_task_id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tasks GET page 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"tasks variable set\"] = jsonData.tasks;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"some_task_id = jsonData.tasks.data[0] ? jsonData.tasks.data[0]._id : 0;",
+									"postman.setEnvironmentVariable(\"some_task_id\", some_task_id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?page=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tasks GET page 2ad32",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 422\"] = responseCode.code === 422;",
+									"",
+									"tests[\"error message variable set\"] = jsonData.error.message;",
+									"tests[\"error errors variable set\"] = jsonData.error.errors;",
+									"tests[\"error errors page variable set\"] = jsonData.error.errors.page;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?page=2ad32",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2ad32",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task GET (Filter by title)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"tasks variable set\"] = jsonData.tasks;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?title=ar",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "ar",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task GET (Filter by description)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"tasks variable set\"] = jsonData.tasks;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?description=pol",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "description",
+									"value": "pol",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task GET (Filter by completed true)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"tasks variable set\"] = jsonData.tasks;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"all_tasks_are_completed = true;",
+									"for (var i = 0; i < jsonData.tasks.data.length; i++) {",
+									"    if(!jsonData.tasks.data[i].completed) {",
+									"        all_tasks_are_completed = false;",
+									"    }",
+									"}",
+									"tests[\"all tasks are completed\"] = all_tasks_are_completed;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?completed=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "completed",
+									"value": "1",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task GET (Filter by completed false)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"tasks variable set\"] = jsonData.tasks;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"all_tasks_are_not_completed = true;",
+									"for (var i = 0; i < jsonData.tasks.data.length; i++) {",
+									"    if(jsonData.tasks.data[i].completed) {",
+									"        all_tasks_are_not_completed = false;",
+									"    }",
+									"}",
+									"tests[\"all tasks are not completed\"] = all_tasks_are_not_completed;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?completed=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "completed",
+									"value": "0",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task GET (Filter by user_id)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"tasks variable set\"] = jsonData.tasks;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"some_user_id = postman.getEnvironmentVariable(\"some_user_id\");",
+									"",
+									"all_tasks_belong_to_user = true;",
+									"for (var i = 0; i < jsonData.tasks.data.length; i++) {",
+									"    if(jsonData.tasks.data[i].user_id != some_user_id) {",
+									"        all_tasks_belong_to_user = false;",
+									"    }",
+									"}",
+									"tests[\"all tasks belong to requested user_id\"] = all_tasks_belong_to_user;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?user_id={{some_user_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "{{some_user_id}}",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task GET (Filter by created_at)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"tasks variable set\"] = jsonData.tasks;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?created_at_from=2017-10-01 00:56:05&created_at_to=2017-10-29 12:56:15",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "created_at_from",
+									"value": "2017-10-01 00:56:05",
+									"equals": true
+								},
+								{
+									"key": "created_at_to",
+									"value": "2017-10-29 12:56:15",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task GET (Filter by updated_at)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"tasks variable set\"] = jsonData.tasks;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?updated_at_from=2017-10-01 00:08:36&updated_at_to=2017-10-30 10:45:06",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "updated_at_from",
+									"value": "2017-10-01 00:08:36",
+									"equals": true
+								},
+								{
+									"key": "updated_at_to",
+									"value": "2017-10-30 10:45:06",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task GET (Filter by due_date)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"tasks variable set\"] = jsonData.tasks;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?due_date_from=2017-11-01 05:48:36&due_date_to=2017-12-27 17:53:20",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "due_date_from",
+									"value": "2017-11-01 05:48:36",
+									"equals": true
+								},
+								{
+									"key": "due_date_to",
+									"value": "2017-12-27 17:53:20",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task GET (Filter by many fields)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"tasks variable set\"] = jsonData.tasks;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?created_at_from=2017-10-01 00:56:05&created_at_to=2017-10-29 12:56:15&updated_at_from=2017-10-01 00:08:36&updated_at_to=2017-10-30 10:45:06&due_date_from=2017-10-01 05:48:36&due_date_to=2017-12-27 17:53:20&completed=0&description=the",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "created_at_from",
+									"value": "2017-10-01 00:56:05",
+									"equals": true
+								},
+								{
+									"key": "created_at_to",
+									"value": "2017-10-29 12:56:15",
+									"equals": true
+								},
+								{
+									"key": "updated_at_from",
+									"value": "2017-10-01 00:08:36",
+									"equals": true
+								},
+								{
+									"key": "updated_at_to",
+									"value": "2017-10-30 10:45:06",
+									"equals": true
+								},
+								{
+									"key": "due_date_from",
+									"value": "2017-10-01 05:48:36",
+									"equals": true
+								},
+								{
+									"key": "due_date_to",
+									"value": "2017-12-27 17:53:20",
+									"equals": true
+								},
+								{
+									"key": "completed",
+									"value": "0",
+									"equals": true
+								},
+								{
+									"key": "description",
+									"value": "the",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task GET (invalid filters)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 422\"] = responseCode.code === 422;",
+									"",
+									"tests[\"error variable set\"] = jsonData.error;",
+									"tests[\"error.status_code variable set\"] = jsonData.error.status_code;",
+									"tests[\"error.errors variable set\"] = jsonData.error.errors;",
+									"",
+									"tests[\"error.errors.title variable set\"] = jsonData.error.errors.title;",
+									"tests[\"error.errors.description variable set\"] = jsonData.error.errors.description;",
+									"tests[\"error.errors.due_date_from variable set\"] = jsonData.error.errors.due_date_from;",
+									"tests[\"error.errors.due_date_to variable set\"] = jsonData.error.errors.due_date_to;",
+									"tests[\"error.errors.completed variable set\"] = jsonData.error.errors.completed;",
+									"tests[\"error.errors.created_at_from variable set\"] = jsonData.error.errors.created_at_from;",
+									"tests[\"error.errors.created_at_to variable set\"] = jsonData.error.errors.created_at_to;",
+									"tests[\"error.errors.updated_at_from variable set\"] = jsonData.error.errors.updated_at_from;",
+									"tests[\"error.errors.updated_at_to variable set\"] = jsonData.error.errors.updated_at_to;",
+									"tests[\"error.errors.page variable set\"] = jsonData.error.errors.page;",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks?completed=oiewjfowi&title=e&description=1&due_date_from=39939&due_date_to=49994&created_at_from=9393&created_at_to=39993&updated_at_from=34929&updated_at_to=9350230&page=fioejeoiwjfoi",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "completed",
+									"value": "oiewjfowi",
+									"equals": true
+								},
+								{
+									"key": "title",
+									"value": "e",
+									"equals": true
+								},
+								{
+									"key": "description",
+									"value": "1",
+									"equals": true
+								},
+								{
+									"key": "due_date_from",
+									"value": "39939",
+									"equals": true
+								},
+								{
+									"key": "due_date_to",
+									"value": "49994",
+									"equals": true
+								},
+								{
+									"key": "created_at_from",
+									"value": "9393",
+									"equals": true
+								},
+								{
+									"key": "created_at_to",
+									"value": "39993",
+									"equals": true
+								},
+								{
+									"key": "updated_at_from",
+									"value": "34929",
+									"equals": true
+								},
+								{
+									"key": "updated_at_to",
+									"value": "9350230",
+									"equals": true
+								},
+								{
+									"key": "page",
+									"value": "fioejeoiwjfoi",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task GET by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"tests[\"task variable set\"] = jsonData.task;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks/{{some_task_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks",
+								"{{some_task_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task DELETE",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"if(jsonData.status === \"ok\") {",
+									"    postman.setEnvironmentVariable(\"some_task_id\", 0);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks/{{some_task_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks",
+								"{{some_task_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task GET 404 not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 404\"] = responseCode.code === 404;",
+									"",
+									"tests[\"error variable set\"] = jsonData.error;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks/9849845949849849849",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks",
+								"9849845949849849849"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tasks GET 422 invalid user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 422\"] = responseCode.code === 422;",
+									"",
+									"tests[\"error variable set\"] = jsonData.error;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks/?user_id=aaaasdaasdddsadsdassssassssssssssssssssssssssssss",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks",
+								""
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "aaaasdaasdddsadsdassssassssssssssssssssssssssssss",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "invalid method 404",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 404\"] = responseCode.code === 404;",
+									"tests[\"error variable set\"] = jsonData.error;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/nonexistentmethod",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"nonexistentmethod"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"",
+									"tests[\"Status message is ok\"] = jsonData.status === \"ok\";",
+									"",
+									"postman.setEnvironmentVariable(\"token\", \"\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/auth/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"auth",
+								"logout"
 							]
 						}
 					},
