@@ -46,7 +46,7 @@ $api->version('v1', function (Router $api) {
         $api->post('reset', 'App\\Api\\V1\\Controllers\\ResetPasswordController@resetPassword');
     });
 
-    $api->group(['middleware' => ['jwt.auth', 'bindings', 'throttle:60,1']], function(Router $api) {
+    $api->group(['middleware' => ['jwt.auth', 'bindings', 'throttle:600,1']], function(Router $api) {
         $api->group(['prefix' => 'auth'], function(Router $api) {
             $api->get('logout', 'App\\Api\\V1\\Controllers\\LoginController@logout');
         });
