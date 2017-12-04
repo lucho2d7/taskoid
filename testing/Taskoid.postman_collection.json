@@ -4942,6 +4942,65 @@
 					"response": []
 				},
 				{
+					"name": "User DELETE",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"status variable set\"] = jsonData.status;",
+									"",
+									"tests[\"Status OK\"] = jsonData.status === \"ok\";",
+									"",
+									"if(jsonData.status === \"ok\") {",
+									"    postman.setEnvironmentVariable(\"some_task_id\", 0);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{accept_header}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/users/{{some_user_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users",
+								"{{some_user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Task GET 404 not found",
 					"event": [
 						{
