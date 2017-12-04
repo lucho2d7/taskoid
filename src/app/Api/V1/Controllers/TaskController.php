@@ -43,7 +43,18 @@ class TaskController extends ApiController
      *      @Parameter("page", type="integer", description="Page number."),
      * })
      * @Request("", headers={"Authorization": "Bearer [token]"})
-     * @Response(200, body={"status":"ok","tasks":""})
+     * @Response(200, body={"status": "ok","tasks": {"current_page": 1,
+                                                        "data": { "[task array]" },
+                                                        "from": 1,
+                                                        "last_page": 113,
+                                                        "next_page_url": "http://localhost:8081/api/tasks?page=2",
+                                                        "path": "http://localhost:8081/api/tasks",
+                                                        "per_page": 5,
+                                                        "prev_page_url": null,
+                                                        "to": 5,
+                                                        "total": 564
+                                                    }
+                                                })
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -120,7 +131,15 @@ class TaskController extends ApiController
      *      @Parameter("user_id", type="boolean", description="Task owner id.", required=true),
      * })
      * @Request("", headers={"Authorization": "Bearer [token]"})
-     * @Response(200, body={"status":"ok"})
+     * @Response(200, body={"status":"ok","task": {"completed": true,
+                                                    "title": "Some interesting task",
+                                                    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                                                    "due_date": "2017-12-27 15:15:00",
+                                                    "user_id": "5a24c388c6abc200273ed173",
+                                                    "updated_at": "2017-12-04 23:08:12",
+                                                    "created_at": "2017-12-04 23:08:12",
+                                                    "_id": "5a25d55c70f1b800081df3e5"
+                                                }})
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -167,7 +186,15 @@ class TaskController extends ApiController
      *      @Parameter("id", type="string", description="Task Id.", required=true),
      * })
      * @Request("", headers={"Authorization": "Bearer [token]"})
-     * @Response(200, body={"status":"ok"})
+     * @Response(200, body={"status":"ok","task": {"completed": true,
+                                                    "title": "Some interesting task",
+                                                    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                                                    "due_date": "2017-12-27 15:15:00",
+                                                    "user_id": "5a24c388c6abc200273ed173",
+                                                    "updated_at": "2017-12-04 23:08:12",
+                                                    "created_at": "2017-12-04 23:08:12",
+                                                    "_id": "5a25d55c70f1b800081df3e5"
+                                                }})
      *
      * @param  \App\Task  $task
      * @return \Illuminate\Http\Response
@@ -198,7 +225,15 @@ class TaskController extends ApiController
      *      @Parameter("user_id", type="boolean", description="Task owner id."),
      * })
      * @Request("", headers={"Authorization": "Bearer [token]"})
-     * @Response(200, body={"status":"ok"})
+     * @Response(200, body={"status":"ok","task": {"completed": true,
+                                                    "title": "Some interesting task",
+                                                    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                                                    "due_date": "2017-12-27 15:15:00",
+                                                    "user_id": "5a24c388c6abc200273ed173",
+                                                    "updated_at": "2017-12-04 23:08:12",
+                                                    "created_at": "2017-12-04 23:08:12",
+                                                    "_id": "5a25d55c70f1b800081df3e5"
+                                                }})
      *
      * @param  \App\Task  $task
      * @param  \Illuminate\Http\Request  $request

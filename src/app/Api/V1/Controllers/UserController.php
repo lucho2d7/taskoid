@@ -37,7 +37,18 @@ class UserController extends ApiController
      *      @Parameter("page", type="integer", description="Page number."),
      * })
      * @Request("", headers={"Authorization": "Bearer [token]"})
-     * @Response(200, body={"status":"ok","users":""})
+     * @Response(200, body={"status": "ok","users": {"current_page": 1,
+                                                        "data": { "[user array]" },
+                                                        "from": 1,
+                                                        "last_page": 113,
+                                                        "next_page_url": "http://localhost:8081/api/users?page=2",
+                                                        "path": "http://localhost:8081/api/users",
+                                                        "per_page": 5,
+                                                        "prev_page_url": null,
+                                                        "to": 5,
+                                                        "total": 564
+                                                    }
+                                                })
      *
      * @param  Request  $request
      * @return \Illuminate\Http\Response
@@ -83,7 +94,12 @@ class UserController extends ApiController
      *      @Parameter("status", type="string", description="User status.", required=true),
      * })
      * @Request("", headers={"Authorization": "Bearer [token]"})
-     * @Response(200, body={"status":"ok"})
+     * @Response(200, body={"status":"ok","user": {"role": "user",
+                                                    "name": "Peter Griffin",
+                                                    "email": "myemail@example.net",
+                                                    "status": "enabled",
+                                                    "_id": "5a24c388c6abc200273ed173"
+                                                }})
      *
      * @param  Request  $request
      * @return \Illuminate\Http\Response
@@ -124,7 +140,14 @@ class UserController extends ApiController
      *      @Parameter("id", type="string", description="User Id.", required=true),
      * })
      * @Request("", headers={"Authorization": "Bearer [token]"})
-     * @Response(200, body={"status":"ok"})
+     * @Response(200, body={"status":"ok","user": {"role": "user",
+                                                    "name": "Peter Griffin",
+                                                    "email": "myemail@example.net",
+                                                    "status": "enabled",
+                                                    "_id": "5a24c388c6abc200273ed173",
+                                                    "updated_at": "2017-12-04 23:08:12",
+                                                    "created_at": "2017-12-04 23:08:12"
+                                                }})
      *
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response

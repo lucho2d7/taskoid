@@ -27,7 +27,7 @@ class LoginController extends ApiController
      *      @Parameter("email", type="string", description="User email.", required=true),
      *      @Parameter("password", type="string", description="User password.", required=true),
      * })
-     * @Response(200, body={"status":"ok","id":"2","role":"user","name":"John Doe","token":"iejwfo9wjef0892w034rju0e8wduf890wdhyv9w8dhv9"})
+     * @Response(200, body={"status":"ok","_id":"2","role":"user","name":"John Doe","token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YTI1ZDJlNzcwZjFiODAwMDgxZGYzZTQiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODEvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE1MTI0MjgyODEsImV4cCI6MTUxMjQzMTg4MSwibmJmIjoxNTEyNDI4MjgxLCJqdGkiOiIxblFzUGlwWmZQVDRLVkVvIn0.Jf-suzGfgnYeEFTmKhAHLNUoBkwQ5X0a8_V-PuSKy4E"})
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Tymon\JWTAuth\JWTAuth  $JWTAuth
@@ -61,6 +61,19 @@ class LoginController extends ApiController
             ]);
     }
 
+    /**
+     * Logout
+     *
+     * @Post("/")
+     * @Versions({"v1"})
+     * @Parameters({
+     * })
+     * @Response(200, body={"status":"ok"})
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Tymon\JWTAuth\JWTAuth  $JWTAuth
+     * @return \Illuminate\Http\Response
+     */
     public function logout(LogoutRequest $request, JWTAuth $JWTAuth)
     {
         $JWTAuth->parseToken()->invalidate();
