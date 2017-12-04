@@ -39,6 +39,8 @@ class TaskController extends ApiController
      *      @Parameter("created_at_to", type="date", description="Return only Tasks with created date before or equal than from the specified date."),
      *      @Parameter("updated_at_from", type="date", description="Return only Tasks with updated date after or equal than from the specified date."),
      *      @Parameter("updated_at_to", type="date", description="Return only Tasks with updated date before or equal than from the specified date."),
+     *      @Parameter("user_id", type="string", description="Return only Tasks that belong to the specified user."),
+     *      @Parameter("page", type="integer", description="Page number."),
      * })
      * @Request("", headers={"Authorization": "Bearer [token]"})
      * @Response(200, body={"status":"ok","tasks":""})
@@ -115,6 +117,7 @@ class TaskController extends ApiController
      *      @Parameter("description", type="string", description="Task description.", required=true),
      *      @Parameter("due_date", type="date", description="Task due date.", required=true),
      *      @Parameter("completed", type="boolean", description="Task completed status.", required=true),
+     *      @Parameter("user_id", type="boolean", description="Task owner id.", required=true),
      * })
      * @Request("", headers={"Authorization": "Bearer [token]"})
      * @Response(200, body={"status":"ok"})
@@ -161,7 +164,7 @@ class TaskController extends ApiController
      * @Get("/{id}")
      * @Versions({"v1"})
      * @Parameters({
-     *      @Parameter("id", type="integer", description="Task Id.", required=true),
+     *      @Parameter("id", type="string", description="Task Id.", required=true),
      * })
      * @Request("", headers={"Authorization": "Bearer [token]"})
      * @Response(200, body={"status":"ok"})
@@ -186,12 +189,13 @@ class TaskController extends ApiController
      *
      * @Put("/")
      * @Versions({"v1"})
-     * @Parameters({
+     * @Parameters({
      *      @Parameter("id", type="integer", description="Task Id.", required=true),
      *      @Parameter("title", type="string", description="Task title.", required=true),
      *      @Parameter("description", type="string", description="Task description.", required=true),
      *      @Parameter("due_date", type="date", description="Task due date.", required=true),
      *      @Parameter("completed", type="boolean", description="Task completed status.", required=true),
+     *      @Parameter("user_id", type="boolean", description="Task owner id."),
      * })
      * @Request("", headers={"Authorization": "Bearer [token]"})
      * @Response(200, body={"status":"ok"})
@@ -242,7 +246,7 @@ class TaskController extends ApiController
      * @Delete("/{id}")
      * @Versions({"v1"})
      * @Parameters({
-     *      @Parameter("id", type="integer", description="Task Id.", required=true),
+     *      @Parameter("id", type="string", description="Task Id.", required=true),
      * })
      * @Request("", headers={"Authorization": "Bearer [token]"})
      * @Response(200, body={"status":"ok"})

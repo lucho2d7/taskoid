@@ -34,6 +34,7 @@ class UserController extends ApiController
      *      @Parameter("email", type="string", description="Partial match for email field."),
      *      @Parameter("role", type="string", description="A valid role."),
      *      @Parameter("status", type="string", description="A valid status."),
+     *      @Parameter("page", type="integer", description="Page number."),
      * })
      * @Request("", headers={"Authorization": "Bearer [token]"})
      * @Response(200, body={"status":"ok","users":""})
@@ -48,11 +49,11 @@ class UserController extends ApiController
         $currentUser = JWTAuth::parseToken()->authenticate();
 
         $this->validate($request, [
-            'id' => 'integer|min:1',
+            'id' => 'string|min:24',
             'name' => 'min:2|max:255',
             'email' => 'min:2|max:255',
-            'status' => 'validstatus',
             'role' => 'validrole',
+            'status' => 'validstatus',
             'page' => 'integer|min:1',
         ]);
 
@@ -120,7 +121,7 @@ class UserController extends ApiController
      * @Get("/{id}")
      * @Versions({"v1"})
      * @Parameters({
-     *      @Parameter("id", type="integer", description="User Id.", required=true),
+     *      @Parameter("id", type="string", description="User Id.", required=true),
      * })
      * @Request("", headers={"Authorization": "Bearer [token]"})
      * @Response(200, body={"status":"ok"})
@@ -146,11 +147,11 @@ class UserController extends ApiController
      * @Put("/")
      * @Versions({"v1"})
      * @Parameters({
-     *      @Parameter("name", type="string", description="User name.", required=false),
-     *      @Parameter("email", type="string", description="Email email.", required=false),
-     *      @Parameter("password", type="string", description="User password.", required=false),
-     *      @Parameter("role", type="string", description="User role.", required=false),
-     *      @Parameter("status", type="string", description="User status.", required=false),
+     *      @Parameter("name", type="string", description="User name."),
+     *      @Parameter("email", type="string", description="Email email."),
+     *      @Parameter("password", type="string", description="User password."),
+     *      @Parameter("role", type="string", description="User role."),
+     *      @Parameter("status", type="string", description="User status."),
      * })
      * @Request("", headers={"Authorization": "Bearer [token]"})
      * @Response(200, body={"status":"ok"})
@@ -196,7 +197,7 @@ class UserController extends ApiController
      * @Delete("/{id}")
      * @Versions({"v1"})
      * @Parameters({
-     *      @Parameter("id", type="integer", description="User Id.", required=true),
+     *      @Parameter("id", type="string", description="User Id.", required=true),
      * })
      * @Request("", headers={"Authorization": "Bearer [token]"})
      * @Response(200, body={"status":"ok"})

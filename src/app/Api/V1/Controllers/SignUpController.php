@@ -29,6 +29,7 @@ class SignUpController extends ApiController
      *      @Parameter("name", type="string", description="User full name.", required=true),
      *      @Parameter("email", type="string", description="User email.", required=true),
      *      @Parameter("password", type="string", description="User password.", required=true),
+     *      @Parameter("password_confirmation", type="string", description="User password confirmation.", required=true),
      * })
      * @Response(200, body={"status":"ok"})
      *
