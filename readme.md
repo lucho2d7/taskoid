@@ -13,7 +13,7 @@ Create a REST web service (API only no web ui needed) of a TO DO list. The actio
 - [x] Delete a task.
 - [x] Show a task by id.
 - [x] List all tasks:
-- [ ] I want to filter the tasks by due date, completed and uncompleted, date of creation, and date of update.
+- [x] I want to filter the tasks by due date, completed and uncompleted, date of creation, and date of update.
 - [x] The response, must be paginated showing only 5 results per page.
 
 ### Technologies to use:
@@ -22,7 +22,7 @@ Create a REST web service (API only no web ui needed) of a TO DO list. The actio
 - [x] You CAN use any framework that you want with no restrictions.
 - [x] You MUST use a MongoDB Database.
 - [ ] The list of all result must be cached with Redis or Memcached.
-- [ ] Take care of the validations of the required fields.
+- [x] Take care of the validations of the required fields.
 
 ### Task Schema:
 
