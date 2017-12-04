@@ -56,18 +56,12 @@ class UserController extends ApiController
             'page' => 'integer|min:1',
         ]);
 
-        $users = [];
-
-        if($currentUser->isSuperAdmin()
-            || $currentUser->isAdmin()) {
-
-            $users = User::namePartial($request->input('name'))
-                            ->emailPartial($request->input('email'))
-                            ->role([$request->input('role')], $currentUser)
-                            ->userId($request->input('id'))
-                            ->status($request->input('status'))
-                            ->paginate(5);
-        }
+        $users = User::namePartial($request->input('name'))
+                        ->emailPartial($request->input('email'))
+                        ->role([$request->input('role')], $currentUser)
+                        ->userId($request->input('id'))
+                        ->status($request->input('status'))
+                        ->paginate(5);
 
         return response()->json([
                 'status' => 'ok',
@@ -117,7 +111,7 @@ class UserController extends ApiController
         return response()->json([
                 'status' => 'ok',
                 'user' => $user
-            ], 200);
+            ], 201);
     }
 
     /**
