@@ -8,7 +8,12 @@ use App\User;
 use App\TestCase;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Hashing\BcryptHasher;
 
+/**
+ * @group resetPassword
+ * Tests the api password reset handling requests
+ */
 class ResetPasswordControllerTest extends TestCase
 {
     use DatabaseMigrations;
@@ -20,13 +25,15 @@ class ResetPasswordControllerTest extends TestCase
         $user = new User([
             'name' => 'Test User',
             'email' => 'test@email.com',
-            'password' => '123456'
+            'password' => '123456',
+            'role' => User::ROLE_USER,
+            'status' => User::STATUS_ENABLED,
         ]);
         $user->save();
-
+        $hash = new BcryptHasher();
         DB::table('password_resets')->insert([
             'email' => 'test@email.com',
-            'token' => bcrypt('my_super_secret_code'),
+            'token' => $hash->make('my_super_secret_code'),
             'created_at' => Carbon::now()
         ]);
     }
@@ -38,6 +45,8 @@ class ResetPasswordControllerTest extends TestCase
             'token' => 'my_super_secret_code',
             'password' => 'mynewpass',
             'password_confirmation' => 'mynewpass'
+        ], [
+            'Accept' => $this->apiAcceptHeader
         ])->assertJson([
             'status' => 'ok'
         ])->isOk();
@@ -52,6 +61,8 @@ class ResetPasswordControllerTest extends TestCase
             'token' => 'my_super_secret_code',
             'password' => 'mynewpass',
             'password_confirmation' => 'mynewpass'
+        ], [
+            'Accept' => $this->apiAcceptHeader
         ])->assertJsonStructure([
             'status',
             'token'
@@ -67,9 +78,11 @@ class ResetPasswordControllerTest extends TestCase
             'token' => 'this_code_is_invalid',
             'password' => 'mynewpass',
             'password_confirmation' => 'mynewpass'
+        ], [
+            'Accept' => $this->apiAcceptHeader
         ])->assertJsonStructure([
             'error'
-        ])->assertStatus(500);
+        ])->assertStatus(422);
     }
 
     public function testResetReturnsValidationError()
@@ -78,6 +91,8 @@ class ResetPasswordControllerTest extends TestCase
             'email' => 'test@email.com',
             'token' => 'my_super_secret_code',
             'password' => 'mynewpass'
+        ], [
+            'Accept' => $this->apiAcceptHeader
         ])->assertJsonStructure([
             'error'
         ])->assertStatus(422);

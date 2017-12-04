@@ -15,6 +15,13 @@ abstract class TestCase extends BaseTestCase
     protected $baseUrl = 'http://localhost';
 
     /**
+     * The API Accept HTTP Header
+     *
+     * @var string
+     */
+    protected $apiAcceptHeader = 'application/x.taskoid.v1+json';
+
+    /**
      * Creates the application.
      *
      * @return \Illuminate\Foundation\Application

@@ -7,6 +7,10 @@ use App\User;
 use App\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
+/**
+ * @group login
+ * Tests the api login handling requests
+ */
 class LoginControllerTest extends TestCase
 {
     use DatabaseMigrations;
@@ -18,7 +22,9 @@ class LoginControllerTest extends TestCase
         $user = new User([
             'name' => 'Test',
             'email' => 'test@email.com',
-            'password' => '123456'
+            'password' => '12345678',
+            'role' => User::ROLE_USER,
+            'status' => User::STATUS_ENABLED,
         ]);
 
         $user->save();
@@ -28,7 +34,9 @@ class LoginControllerTest extends TestCase
     {
         $this->post('api/auth/login', [
             'email' => 'test@email.com',
-            'password' => '123456'
+            'password' => '12345678'
+        ], [
+            'Accept' => $this->apiAcceptHeader
         ])->assertJson([
             'status' => 'ok'
         ])->assertJsonStructure([
@@ -42,6 +50,8 @@ class LoginControllerTest extends TestCase
         $this->post('api/auth/login', [
             'email' => 'unknown@email.com',
             'password' => '123456'
+        ], [
+            'Accept' => $this->apiAcceptHeader
         ])->assertJsonStructure([
             'error'
         ])->assertStatus(403);
@@ -51,6 +61,8 @@ class LoginControllerTest extends TestCase
     {
         $this->post('api/auth/login', [
             'email' => 'test@email.com'
+        ], [
+            'Accept' => $this->apiAcceptHeader
         ])->assertJsonStructure([
             'error'
         ])->assertStatus(422);
