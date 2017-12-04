@@ -244,6 +244,23 @@ class User extends Moloquent implements
      * @param  string  $email
      * @return Illuminate\Database\Eloquent\Builder
      */
+    public function scopeEmail($query, $email)
+    {
+        if($email)
+        {
+            return $query->where('email', 'like', $email);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Partial email match query scope
+     *
+     * @param  Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $email
+     * @return Illuminate\Database\Eloquent\Builder
+     */
     public function scopeEmailPartial($query, $email)
     {
         if($email)
