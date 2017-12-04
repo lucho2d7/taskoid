@@ -20,7 +20,7 @@ class UserPolicy extends BasePolicy
     public function before($user, $ability)
     {
         // SuperAdmin can do anything but delete itself or add another superadmin
-        if($user->isSuperAdmin() && !in_array($ability, ['delete', 'store'])) {
+        if($user->isSuperAdmin() && !in_array($ability, ['delete', 'store', 'update'])) {
             return true;
         }
     }
@@ -46,6 +46,7 @@ class UserPolicy extends BasePolicy
      */
     public function store(User $user, $role)
     {
+        // Avoid creation of superadmin, we only want one
         if($role == User::ROLE_SUPERADMIN) {
             return false;
         }
@@ -72,6 +73,11 @@ class UserPolicy extends BasePolicy
      */
     public function update(User $user, User $userToAccess, $newrole)
     {
+        // Avoid promotion to superadmin, we only want one
+        if($newrole == User::ROLE_SUPERADMIN) {
+            return false;
+        }
+
         // Prevent privilege escalation
         // Only allow asignation of lower roles
         if($this->hierarchicallyAllowed($user, $userToAccess)
