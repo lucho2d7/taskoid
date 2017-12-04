@@ -23,13 +23,18 @@ class UserPolicy extends BasePolicy
         if($user->isSuperAdmin() && !in_array($ability, ['delete', 'store', 'update'])) {
             return true;
         }
+
+        // Regular users cannot operate on Users
+        if($user->isUser()) {
+            return false;
+        }
     }
 
     /**
      * Determine whether the user can view the user.
      *
      * @param  \App\User  $user
-     * @param  \App\User  $userToView
+     * @param  \App\User  $userToAccess
      * @return mixed
      */
     public function view(User $user, User $userToAccess)
@@ -92,7 +97,7 @@ class UserPolicy extends BasePolicy
      * Determine whether the user can delete the user.
      *
      * @param  \App\User  $user
-     * @param  \App\User  $user
+     * @param  \App\User  $userToAccess
      * @return mixed
      */
     public function delete(User $user, User $userToAccess)
@@ -119,10 +124,6 @@ class UserPolicy extends BasePolicy
      */
     public function list(User $user, Array $params)
     {
-        if($user->isUser()) {
-            return false;
-        }
-
         if(isset($params['role']) && !empty($params['role'])) {
 
             if(!User::isValidRole($params['role'])) {
