@@ -16,8 +16,6 @@ services:
     build:
       context: ./
       dockerfile: dockerfile.app
-    volumes:
-      - ../../src:/var/www
     environment:
         - "DB_HOST=database"
         - "DB_PORT=27017"
