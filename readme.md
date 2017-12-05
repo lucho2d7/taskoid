@@ -104,7 +104,7 @@ Open http://localhost:8081 you should see a simple welcome screen that reads "Ta
 ### Running tests
 
 The included tests are far from exhaustive, but a basic set.
-To run the included Postman Collections with newman you first need to migrate and seed the database
+To run the included Postman Collections with [newman](https://www.npmjs.com/package/newman) you first need to migrate and seed the database
 
 ```
 # Identify CONTAINER ID corresponding to taskoid_app image with docker ps
