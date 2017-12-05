@@ -152,7 +152,7 @@ class TaskController extends ApiController
         
         $this->validate($request, [
             'title' => 'required|min:2|max:1020',
-            'description' => 'required|min:2|max:1020',
+            'description' => 'min:2|max:1020',
             'completed' => 'boolean',
             'due_date' => 'required|date_format:Y-m-d H:i:s',
             'user_id' => 'string|min:24|validuserid',
@@ -247,7 +247,7 @@ class TaskController extends ApiController
 
         $this->validate($request, [
             'title' => 'required|min:2|max:1020',
-            'description' => 'required|min:2|max:1020',
+            'description' => 'min:2|max:1020',
             'completed' => 'boolean',
             'due_date' => 'required|date_format:Y-m-d H:i:s',
             'user_id' => 'string|min:24|validuserid',
