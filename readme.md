@@ -84,6 +84,7 @@ Some users available after you run the database seeding command are:
 Base URL: http://localhost:8081/api/
 
 Required JWT HTTP Accept Header: application/x.taskoid.v1+json
+
 Required JWT HTTP Authorization Header: Bearer {your token}
 
 See API specs in [apidocs.md](https://github.com/lucho2d7/taskoid/blob/master/apidocs.md)
@@ -104,6 +105,7 @@ Open http://localhost:8081 you should see a simple welcome screen that reads "Ta
 ### Running tests
 
 The included tests are far from exhaustive, but a basic set.
+
 To run the included Postman Collections with [newman](https://www.npmjs.com/package/newman) you first need to migrate and seed the database
 
 ```
