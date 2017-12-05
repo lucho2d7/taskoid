@@ -24,4 +24,3 @@ RUN cp .env.example .env
 RUN composer install
 RUN chown www-data:www-data -R /var/www
 RUN chmod -R 775 storage/ bootstrap/cache
-#RUN ls storage/ storage/logs storage/framework storage/framework/cache
